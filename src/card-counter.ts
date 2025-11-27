@@ -51,6 +51,10 @@ export function countCardsInText(content: string): DeckCount {
         const categoryMatch = trimmed.match(/^##\s+(.+?)(?:\s+\((\d+)\))?$/);
         if (categoryMatch) {
             currentCategory = categoryMatch[1];
+            // Stop counting if we hit Stats or Description sections
+            if (currentCategory === "Stats" || currentCategory === "Description") {
+                break;
+            }
             const expectedCount = categoryMatch[2] ? parseInt(categoryMatch[2]) : 0;
             if (expectedCount > 0) {
                 cardsByCategory.set(currentCategory, 0); // Initialize, will count actual cards
