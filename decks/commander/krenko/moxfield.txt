@@ -2,10 +2,10 @@
 # Format: commander
 # Imported from Moxfield: https://www.moxfield.com/decks/JVufN3rIu0CD2qvMLofcgA
 
-# Commander
+# Commander (1)
 1 Krenko, Mob Boss
 
-# Mainboard
+# Mainboard (99)
 1 Galvanic Blast
 1 Kiki-Jiki, Mirror Breaker
 1 Mogg Fanatic
@@ -80,4 +80,4 @@
 1 Powerbalance
 1 Sarpadian Simulacrum
 
-# Sideboard
+# Sideboard (0)

@@ -1,0 +1,30 @@
+# Red Deck Wins (RDW) - Organized by Function
+# Format: Standard
+# Total: 60 cards
+
+## Early Game Threats (8)
+4 Monastery Swiftspear
+4 Soul-Scar Mage
+
+## Mid-Range Threats (7)
+4 Goblin Chainwhirler
+3 Earthshaker Khenra
+
+## Finishers (2)
+2 Hazoret the Fervent
+
+## Removal/Burn (15)
+4 Lightning Bolt
+4 Lightning Strike
+4 Shock
+3 Wizard's Lightning
+
+## Card Advantage (6)
+4 Experimental Frenzy
+2 Risk Factor
+
+## Planeswalkers (2)
+2 Chandra, Torch of Defiance
+
+## Lands (20)
+20 Mountain

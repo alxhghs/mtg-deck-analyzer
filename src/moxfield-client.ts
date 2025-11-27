@@ -93,12 +93,14 @@ export class MoxfieldClient {
 
         // Add commander if present (main card in Commander format)
         if (deck.main) {
-            content += "# Commander\n";
+            content += "# Commander (1)\n";
             content += `1 ${deck.main.name}\n\n`;
         } else if (deck.boards?.commanders?.cards) {
             // Add commanders from boards if no main commander
-            content += "# Commander\n";
-            Object.values(deck.boards.commanders.cards).forEach((cardData) => {
+            const commanderCards = Object.values(deck.boards.commanders.cards);
+            const commanderTotal = commanderCards.reduce((sum, card) => sum + card.quantity, 0);
+            content += `# Commander (${commanderTotal})\n`;
+            commanderCards.forEach((cardData) => {
                 const name = cardData.card?.name || cardData.name;
                 if (name) {
                     content += `${cardData.quantity} ${name}\n`;
@@ -109,8 +111,10 @@ export class MoxfieldClient {
 
         // Add mainboard
         if (deck.boards?.mainboard?.cards) {
-            content += "# Mainboard\n";
-            Object.values(deck.boards.mainboard.cards).forEach((cardData) => {
+            const mainboardCards = Object.values(deck.boards.mainboard.cards);
+            const mainboardTotal = mainboardCards.reduce((sum, card) => sum + card.quantity, 0);
+            content += `# Mainboard (${mainboardTotal})\n`;
+            mainboardCards.forEach((cardData) => {
                 const name = cardData.card?.name || cardData.name;
                 if (name) {
                     content += `${cardData.quantity} ${name}\n`;
@@ -121,8 +125,10 @@ export class MoxfieldClient {
 
         // Add sideboard if present
         if (deck.boards?.sideboard?.cards) {
-            content += "# Sideboard\n";
-            Object.values(deck.boards.sideboard.cards).forEach((cardData) => {
+            const sideboardCards = Object.values(deck.boards.sideboard.cards);
+            const sideboardTotal = sideboardCards.reduce((sum, card) => sum + card.quantity, 0);
+            content += `# Sideboard (${sideboardTotal})\n`;
+            sideboardCards.forEach((cardData) => {
                 const name = cardData.card?.name || cardData.name;
                 if (name) {
                     content += `${cardData.quantity} ${name}\n`;

@@ -2,10 +2,10 @@
 # Format: commander
 # Imported from Moxfield: https://www.moxfield.com/decks/DebJHvH3Uku9JZqBOpBvOg
 
-# Commander
+# Commander (1)
 1 Clavileño, First of the Blessed
 
-# Mainboard
+# Mainboard (113)
 1 Vito, Thorn of the Dusk Rose
 1 Knight of the Ebon Legion
 1 Necropotence
@@ -108,7 +108,7 @@
 5 Plains
 9 Swamp
 
-# Sideboard
+# Sideboard (29)
 1 Epicure of Blood
 1 Terramorphic Expanse
 1 Evolving Wilds

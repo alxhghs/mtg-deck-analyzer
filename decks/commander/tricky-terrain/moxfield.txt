@@ -2,10 +2,10 @@
 # Format: commander
 # Imported from Moxfield: https://www.moxfield.com/decks/gmj06aiKMEaNLgGOD1ooUg
 
-# Commander
+# Commander (1)
 1 Omo, Queen of Vesuva
 
-# Mainboard
+# Mainboard (99)
 1 Dispel
 1 Counterspell
 1 Lord of the Unreal
@@ -104,7 +104,7 @@
 2 Forest
 2 Island
 
-# Sideboard
+# Sideboard (22)
 1 Feline Sovereign
 1 Traverse the Ulvenwald
 1 Circuitous Route
