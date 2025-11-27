@@ -107,13 +107,26 @@ You are helping the user reduce their Magic: The Gathering deck to a specific si
           Artifact: X (X.X%)
           Planeswalker: X (X.X%)
           Land: 37 (37.4%)
+
+        ## Description
+
+        [3-5 sentence summary of the deck's strategy, synergies, commander role, game plan, and notable strengths]
         ```
 
-9. **After creating the file, always add stats:**
+9. **After creating the file, always add stats and description:**
     - Run the card counter tool: `npx ts-node src/card-counter.ts <file-path>`
     - Add a `## Stats` section at the bottom matching the format above
-    - Include Total Cards, Unique Cards, and Card Types with percentages
-    - Calculate percentages as (count / total) \* 100, rounded to 1 decimal
+    - Add a `## Description` section after stats with a 3-5 sentence summary covering:
+        - Main strategy and win conditions
+        - Key synergies and interactions
+        - Commander role and how the deck supports it
+        - Overall game plan (aggro/midrange/control/combo)
+        - Notable strengths or unique aspects
+    - Add a bracket estimate at the end of description:
+        - **Bracket 1**: Precon level, few upgrades, no tutors/fast mana
+        - **Bracket 2**: Upgraded precon, some tutors, Sol Ring, synergistic but fair
+        - **Bracket 3**: Optimized casual, efficient tutors, powerful engines, possible infinite combos
+        - **Bracket 4**: cEDH, fast mana (Mana Crypt, Dockside), free spells, combo-focused
 
 ## Example Interaction
 

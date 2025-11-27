@@ -280,15 +280,28 @@ Artifact: 8 (8.1%)
 Planeswalker: 1 (1.0%)
 Land: 36 (36.4%)
 
+## Description
+
+This deck is a vampire tribal strategy focused on lifegain and drain effects. The commander creates demon tokens when vampires attack, providing a steady stream of value. The deck includes multiple drain engines that trigger when you gain life (Vito, Sanguine Bond, Exquisite Blood), creating powerful synergies. Aristocrats elements with sacrifice outlets provide additional value and resilience. The manabase is well-balanced with 36 lands, supporting a mid-range strategy that can both go wide with tokens and leverage powerful individual threats.
+
 ```
 
 Include card counts per category to help track deck balance.
 
-**ALWAYS include stats at the bottom of every generated decklist:**
+**ALWAYS include stats and description at the bottom of every generated decklist:**
 - Run the card counter tool after creating the file
-- Add a `## Stats` section at the end with the breakdown
-- Format: Total Cards, Unique Cards, then Card Types with counts and percentages
-- Calculate percentages as (count / total) * 100, rounded to 1 decimal place
+- Add a `## Stats` section with the breakdown (Total Cards, Unique Cards, Card Types with percentages)
+- Add a `## Description` section after stats with a 3-5 sentence summary covering:
+  - Main strategy and win conditions
+  - Key synergies and interactions
+  - Commander role and how the deck supports it
+  - Overall game plan (aggro/midrange/control/combo)
+  - Notable strengths or unique aspects
+- Add a bracket estimate at the end of description:
+  - **Bracket 1**: Precon level, few upgrades, no tutors/fast mana, casual cards
+  - **Bracket 2**: Upgraded precon, some tutors, Sol Ring, synergistic but fair
+  - **Bracket 3**: Optimized casual, efficient tutors, powerful engines, possible infinite combos, strong interaction
+  - **Bracket 4**: cEDH, fast mana (Mana Crypt, Dockside), free spells, combo-focused, wins turns 3-5
 
 ## Coding Conventions
 

@@ -117,3 +117,9 @@ Card Types:
   Artifact: 7 (7.1%)
   Planeswalker: 1 (1.0%)
   Land: 37 (37.4%)
+
+## Description
+
+This deck is a vampire tribal aristocrats strategy focused on lifegain and drain effects. Clavileño, First of the Blessed creates demon tokens when vampires attack, providing steady value and board presence. The deck leverages powerful drain engines (Vito, Sanguine Bond, Exquisite Blood, Bloodthirsty Conqueror) that convert lifegain into opponent life loss, creating a potent combo finish. Aristocrats elements with multiple sacrifice outlets (Viscera Seer, Bartolomé del Presidio, Yahenni) and death triggers (Blood Artist, Cruel Celebrant, Bastion of Remembrance) provide additional reach and resilience. The manabase of 37 lands supports a midrange strategy that can pressure opponents with aggressive vampire attacks while controlling the board with efficient removal and building toward overwhelming drain-based victories.
+
+**Estimated Bracket: 3** - Contains efficient tutors (Demonic Tutor), powerful engines (Necropotence, Bolas's Citadel), infinite combo potential (Exquisite Blood + Sanguine Bond), and highly optimized interaction. The deck lacks fast mana beyond Sol Ring and doesn't run cEDH staples like Dockside Extortionist or free counterspells, placing it firmly in high-powered casual rather than competitive.
