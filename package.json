@@ -1,23 +1,27 @@
 {
-  "name": "mtg-deck-builder",
-  "version": "1.0.0",
-  "description": "MTG deck analyzer that fetches card data and helps with deck recommendations",
-  "main": "dist/index.js",
-  "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts",
-    "analyze": "npm run build && npm start"
-  },
-  "keywords": ["mtg", "magic-the-gathering", "deck-builder"],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/node": "^20.10.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
-  },
-  "dependencies": {
-    "axios": "^1.6.2"
-  }
+    "name": "mtg-deck-builder",
+    "version": "1.0.0",
+    "description": "MTG deck analyzer that fetches card data and helps with deck recommendations",
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "tsc",
+        "start": "node dist/index.js",
+        "dev": "ts-node src/index.ts",
+        "analyze": "npm run build && npm start"
+    },
+    "keywords": [
+        "mtg",
+        "magic-the-gathering",
+        "deck-builder"
+    ],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/node": "^20.10.0",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.3.3"
+    },
+    "dependencies": {
+        "axios": "^1.6.2"
+    }
 }
