@@ -52,7 +52,8 @@ You are helping the user reduce their Magic: The Gathering deck to a specific si
 8. **After user accepts** the recommendations:
     - Create a timestamped decklist file: `decks/<format>/<deck-name>/YYYYMMDD-HHMM-reduced.txt`
     - Use the current date and time for the timestamp
-    - **Organize by card type** (Creatures, Instants, Sorceries, Enchantments, Artifacts, Planeswalkers, Lands)
+    - **Organize by card type** (Commander, Creatures, Instants, Sorceries, Enchantments, Artifacts, Planeswalkers, Lands)
+    - **ALWAYS include the Commander section first** for Commander format decks
     - Remove the recommended cuts
     - **CRITICAL: Double-check your counts** - verify the total adds up to exactly 99 (or target count)
     - **Count each card type carefully** - including basics (e.g., "9 Swamp" means 9 cards, not 1)
@@ -65,6 +66,9 @@ You are helping the user reduce their Magic: The Gathering deck to a specific si
         # Goal: Reduce deck to <target> cards
         # Cards Cut (<X>): <list of cut cards>
         # Strategy: <brief note on what was prioritized>
+
+        ## Commander (1)
+        1 Commander Name
 
         ## Creatures (X)
         1 Card Name
@@ -90,7 +94,26 @@ You are helping the user reduce their Magic: The Gathering deck to a specific si
         ...
         9 Swamp
         9 Plains
+
+        ## Stats
+        Total Cards: 99
+        Unique Cards: X
+
+        Card Types:
+          Creature: X (X.X%)
+          Instant: X (X.X%)
+          Sorcery: X (X.X%)
+          Enchantment: X (X.X%)
+          Artifact: X (X.X%)
+          Planeswalker: X (X.X%)
+          Land: 37 (37.4%)
         ```
+
+9. **After creating the file, always add stats:**
+    - Run the card counter tool: `npx ts-node src/card-counter.ts <file-path>`
+    - Add a `## Stats` section at the bottom matching the format above
+    - Include Total Cards, Unique Cards, and Card Types with percentages
+    - Calculate percentages as (count / total) \* 100, rounded to 1 decimal
 
 ## Example Interaction
 

@@ -84,6 +84,34 @@ Within each deck folder:
 3. User asks questions about deck improvements, weaknesses, or strategies
 4. Copilot uses the deck analysis output visible in the terminal/editor
 
+## Card Counting Tool
+
+**ALWAYS use the card counting tool before finalizing deck recommendations!**
+
+The `card-counter.ts` utility provides accurate card counting and validation:
+
+```bash
+# Count cards in any decklist
+npx ts-node src/card-counter.ts decks/commander/blood-rites/moxfield.txt
+
+# Validate category counts match headers
+npx ts-node src/card-counter.ts decks/commander/blood-rites/organized.txt --validate
+```
+
+**When to use:**
+
+- Before suggesting cuts (to know exact current count)
+- After creating variant files (to verify final count)
+- When validating organized decklists (to ensure category headers are correct)
+- When user questions your card count
+
+**The tool:**
+
+- Counts total cards and unique cards
+- Breaks down counts by category
+- Validates category headers match actual card counts
+- Handles all deck formats (4 Card Name, 4x Card Name, Card Name)
+
 ## When User Asks About a Specific Deck
 
 When the user asks about a deck by name (e.g., "help me get the blood-rites deck down to 100 cards"), you should:
@@ -115,7 +143,8 @@ When the user asks about a deck by name (e.g., "help me get the blood-rites deck
     - Reference oracle text to understand card synergies and combos
 
 5. **For deck reduction requests (getting to exactly 100 cards, etc.):**
-    - Count current cards in the deck
+    - **USE THE CARD COUNTER TOOL FIRST:** `npx ts-node src/card-counter.ts <deck-file>`
+    - Verify the exact current card count before making recommendations
     - **Read the deck's cache file** to understand what each card does
     - Identify redundant effects or weakest cards by comparing oracle text
     - Suggest specific cuts based on mana curve, redundancy, or strategy fit
@@ -139,11 +168,14 @@ Examples:
 
 ### Creating Recommendation Files
 
-1. **Analyze the current deck** (read moxfield.txt and organized.txt if available)
-2. **Understand the request** (more aggro, budget, specific theme, etc.)
-3. **Create a new timestamped file** in the deck folder with your recommendations
-4. **Use the same format as organized.txt** with categories and card counts
-5. **Include a header explaining the changes:**
+1. **Use the card counter tool** to get accurate baseline counts
+2. **Analyze the current deck** (read moxfield.txt and organized.txt if available)
+3. **Understand the request** (more aggro, budget, specific theme, etc.)
+4. **Create a new timestamped file** in the deck folder with your recommendations
+5. **Verify your recommendation** with the card counter tool before finalizing
+6. **Create a new timestamped file** in the deck folder with your recommendations
+7. **Use the same format as organized.txt** with categories and card counts
+8. **Include a header explaining the changes:**
 
 ```
 # <Deck Name> - <Variant Description>
@@ -155,14 +187,16 @@ Examples:
 ## Category Name (X)
 1 Card Name
 ...
-```
-
 ### Best Practices
 
+- **ALWAYS use card counter tool**: Verify counts before and after creating recommendations
 - **Keep history**: Never delete old recommendation files - they serve as version history
 - **Be specific**: Include detailed explanations in the header about why changes were made
 - **Reference cards by name**: Make it easy to compare with other versions
 - **Track the delta**: Mention what cards were added/removed compared to the base deck
+- **Timestamp everything**: Use current date/time for the filename (YYYYMMDD-HHMM format)
+- **Descriptive names**: Use clear, concise descriptions (drain-focus, token-heavy, control-build, etc.)
+- **Validate organized files**: Use `--validate` flag to ensure category counts are accurate
 - **Timestamp everything**: Use current date/time for the filename (YYYYMMDD-HHMM format)
 - **Descriptive names**: Use clear, concise descriptions (drain-focus, token-heavy, control-build, etc.)
 
@@ -209,23 +243,52 @@ When organizing cards by function (for variant decklists or analysis), use these
 When creating organized variant files, use this format:
 
 ```
+
 # Deck Name - Organized by Function
 
+## Commander (1)
+
+1 Commander Name
+
 ## Ramp (10)
+
 1 Sol Ring
 1 Arcane Signet
 ...
 
 ## Draw (8)
+
 1 Rhystic Study
 ...
 
 ## Removal (12)
+
 1 Swords to Plowshares
 ...
+
+## Stats
+
+Total Cards: 99
+Unique Cards: 87
+
+Card Types:
+Creature: 30 (30.3%)
+Instant: 10 (10.1%)
+Sorcery: 8 (8.1%)
+Enchantment: 6 (6.1%)
+Artifact: 8 (8.1%)
+Planeswalker: 1 (1.0%)
+Land: 36 (36.4%)
+
 ```
 
 Include card counts per category to help track deck balance.
+
+**ALWAYS include stats at the bottom of every generated decklist:**
+- Run the card counter tool after creating the file
+- Add a `## Stats` section at the end with the breakdown
+- Format: Total Cards, Unique Cards, then Card Types with counts and percentages
+- Calculate percentages as (count / total) * 100, rounded to 1 decimal place
 
 ## Coding Conventions
 
@@ -245,3 +308,4 @@ Include card counts per category to help track deck balance.
     - Budget constraints if mentioned
 - For code changes: maintain existing architecture and conventions
 - For new features: consider caching, API limits, and error handling
+```
