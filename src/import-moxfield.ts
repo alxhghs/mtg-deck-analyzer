@@ -5,18 +5,12 @@ async function main() {
 
     if (args.length === 0) {
         console.log("\n🎴 Moxfield Deck Importer\n");
-        console.log(
-            "Usage: npm run import <moxfield-url-or-id> [deck-name] [--force]"
-        );
+        console.log("Usage: npm run import <moxfield-url-or-id> [deck-name] [--force]");
         console.log("\nExamples:");
-        console.log(
-            "  npm run import https://www.moxfield.com/decks/abc123xyz"
-        );
+        console.log("  npm run import https://www.moxfield.com/decks/abc123xyz");
         console.log("  npm run import abc123xyz");
         console.log("  npm run import abc123xyz my-custom-name");
-        console.log(
-            "  npm run import -- abc123xyz --force  # Force refresh from Moxfield\n"
-        );
+        console.log("  npm run import -- abc123xyz --force  # Force refresh from Moxfield\n");
         process.exit(1);
     }
 
@@ -32,11 +26,7 @@ async function main() {
         const client = new MoxfieldClient();
         const deckId = MoxfieldClient.extractDeckId(urlOrId);
 
-        const deckFolder = await client.saveDeckToFile(
-            deckId,
-            deckName,
-            forceRefresh
-        );
+        const deckFolder = await client.saveDeckToFile(deckId, deckName, forceRefresh);
 
         console.log(`✅ Deck imported successfully!`);
         console.log(`📁 Saved to: ${deckFolder}/\n`);

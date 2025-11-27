@@ -46,13 +46,9 @@ export class MoxfieldClient {
             return response.data;
         } catch (error: any) {
             if (error.response?.status === 404) {
-                throw new Error(
-                    `Deck not found: ${deckId}. Make sure the deck is public.`
-                );
+                throw new Error(`Deck not found: ${deckId}. Make sure the deck is public.`);
             }
-            throw new Error(
-                `Failed to fetch deck from Moxfield: ${error.message}`
-            );
+            throw new Error(`Failed to fetch deck from Moxfield: ${error.message}`);
         }
     }
 
@@ -80,14 +76,10 @@ export class MoxfieldClient {
         if (!forceRefresh && !this.cache.shouldFetch(deckId, filePath)) {
             const metadata = this.cache.getMetadata(deckId);
             const timeUntilExpiry = this.cache.getTimeUntilExpiry(deckId);
-            const minutesUntilExpiry = timeUntilExpiry
-                ? Math.ceil(timeUntilExpiry / 1000 / 60)
-                : 0;
+            const minutesUntilExpiry = timeUntilExpiry ? Math.ceil(timeUntilExpiry / 1000 / 60) : 0;
 
             console.log(
-                `📦 Using cached deck (fetched ${new Date(
-                    metadata!.lastFetched
-                ).toLocaleString()})`
+                `📦 Using cached deck (fetched ${new Date(metadata!.lastFetched).toLocaleString()})`
             );
             console.log(`   Cache expires in ${minutesUntilExpiry} minutes`);
             console.log(`   Use --force to refresh now\n`);
@@ -160,8 +152,7 @@ export class MoxfieldClient {
 
         if (formatLower.includes("standard")) return "standard";
         if (formatLower.includes("modern")) return "modern";
-        if (formatLower.includes("commander") || formatLower.includes("edh"))
-            return "commander";
+        if (formatLower.includes("commander") || formatLower.includes("edh")) return "commander";
         if (formatLower.includes("pioneer")) return "other";
         if (formatLower.includes("legacy")) return "other";
         if (formatLower.includes("vintage")) return "other";

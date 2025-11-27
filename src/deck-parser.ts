@@ -26,11 +26,7 @@ export class DeckParser {
             const trimmed = line.trim();
 
             // Skip empty lines and comments
-            if (
-                !trimmed ||
-                trimmed.startsWith("#") ||
-                trimmed.startsWith("//")
-            ) {
+            if (!trimmed || trimmed.startsWith("#") || trimmed.startsWith("//")) {
                 continue;
             }
 

@@ -74,10 +74,7 @@ export class DeckAnalyzer {
 
         Object.entries(colorCount).forEach(([color, count]) => {
             if (count > 0) {
-                const percentage = (
-                    (count / this.deck.totalCards) *
-                    100
-                ).toFixed(1);
+                const percentage = ((count / this.deck.totalCards) * 100).toFixed(1);
                 distribution += `  ${colorNames[color]}: ${count} (${percentage}%)\n`;
             }
         });
@@ -138,10 +135,7 @@ export class DeckAnalyzer {
         let typeDisplay = "Card Types:\n";
         Object.entries(types).forEach(([type, count]) => {
             if (count > 0) {
-                const percentage = (
-                    (count / this.deck.totalCards) *
-                    100
-                ).toFixed(1);
+                const percentage = ((count / this.deck.totalCards) * 100).toFixed(1);
                 typeDisplay += `  ${type}: ${count} (${percentage}%)\n`;
             }
         });
@@ -161,8 +155,7 @@ export class DeckAnalyzer {
             }
         });
 
-        const avgCMC =
-            nonLandCards > 0 ? (totalCMC / nonLandCards).toFixed(2) : "0";
+        const avgCMC = nonLandCards > 0 ? (totalCMC / nonLandCards).toFixed(2) : "0";
         return `Average CMC (non-land): ${avgCMC}\n`;
     }
 
@@ -176,14 +169,10 @@ export class DeckAnalyzer {
             const card = this.cards.get(deckCard.name);
             if (card) {
                 output += `${deckCard.quantity}x ${card.name}\n`;
-                output += `   ${card.type_line} | ${
-                    card.mana_cost || "N/A"
-                } | CMC: ${card.cmc}\n`;
+                output += `   ${card.type_line} | ${card.mana_cost || "N/A"} | CMC: ${card.cmc}\n`;
                 if (card.oracle_text) {
                     const shortText = card.oracle_text.substring(0, 80);
-                    output += `   ${shortText}${
-                        card.oracle_text.length > 80 ? "..." : ""
-                    }\n`;
+                    output += `   ${shortText}${card.oracle_text.length > 80 ? "..." : ""}\n`;
                 }
                 output += "\n";
             } else {

@@ -48,10 +48,7 @@ export class CardCache {
                 cacheData[key] = value;
             });
 
-            fs.writeFileSync(
-                this.cacheFile,
-                JSON.stringify(cacheData, null, 2)
-            );
+            fs.writeFileSync(this.cacheFile, JSON.stringify(cacheData, null, 2));
             console.log(`Saved ${this.cache.size} cards to cache`);
         } catch (error) {
             console.error("Error saving cache:", error);

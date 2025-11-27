@@ -53,10 +53,7 @@ export class MoxfieldCache {
                 cacheData[key] = value;
             });
 
-            fs.writeFileSync(
-                this.cacheFile,
-                JSON.stringify(cacheData, null, 2)
-            );
+            fs.writeFileSync(this.cacheFile, JSON.stringify(cacheData, null, 2));
         } catch (error) {
             console.error("Error saving Moxfield cache:", error);
         }

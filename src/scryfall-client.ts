@@ -16,14 +16,11 @@ export class ScryfallClient {
         try {
             await this.delay();
 
-            const response = await axios.get(
-                `${SCRYFALL_API_BASE}/cards/named`,
-                {
-                    params: {
-                        exact: cardName,
-                    },
-                }
-            );
+            const response = await axios.get(`${SCRYFALL_API_BASE}/cards/named`, {
+                params: {
+                    exact: cardName,
+                },
+            });
 
             return this.mapScryfallCard(response.data);
         } catch (error: any) {

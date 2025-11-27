@@ -26,9 +26,7 @@ async function main() {
         const deck = DeckParser.parseDecklist(decklistPath);
         const uniqueCardNames = DeckParser.getUniqueCardNames(deck);
 
-        console.log(
-            `Found ${deck.cards.length} unique cards (${deck.totalCards} total)\n`
-        );
+        console.log(`Found ${deck.cards.length} unique cards (${deck.totalCards} total)\n`);
 
         // Initialize cache and API client
         const cache = new CardCache();
@@ -50,9 +48,7 @@ async function main() {
         console.log(`📦 ${cachedCards.size} cards found in cache`);
 
         if (cardsToFetch.length > 0) {
-            console.log(
-                `🌐 Fetching ${cardsToFetch.length} cards from Scryfall API...\n`
-            );
+            console.log(`🌐 Fetching ${cardsToFetch.length} cards from Scryfall API...\n`);
 
             // Fetch cards from API
             const fetchedCards = await client.getCardsByNames(cardsToFetch);

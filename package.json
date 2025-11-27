@@ -8,7 +8,10 @@
         "start": "node dist/index.js",
         "dev": "ts-node src/index.ts",
         "analyze": "npm run build && npm start",
-        "import": "ts-node src/import-moxfield.ts"
+        "import": "ts-node src/import-moxfield.ts",
+        "format": "prettier --write \"src/**/*.ts\" \"*.json\" \"*.md\"",
+        "format:check": "prettier --check \"src/**/*.ts\" \"*.json\" \"*.md\"",
+        "prepare": "husky"
     },
     "keywords": [
         "mtg",
@@ -17,8 +20,14 @@
     ],
     "author": "",
     "license": "ISC",
+    "lint-staged": {
+        "*.{ts,json,md}": "prettier --write"
+    },
     "devDependencies": {
         "@types/node": "^20.10.0",
+        "husky": "^9.1.7",
+        "lint-staged": "^16.2.7",
+        "prettier": "^3.7.1",
         "ts-node": "^10.9.2",
         "typescript": "^5.3.3"
     },
