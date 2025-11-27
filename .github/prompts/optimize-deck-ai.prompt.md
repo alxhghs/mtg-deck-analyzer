@@ -84,9 +84,10 @@ Each iteration should use a **different strategic lens** for analysis. Rotate th
     - Prioritize commander protection
 
 9. **Land Optimization Focus** (Iterations 81-90)
-    - Optimize land count and quality
-    - Cut tapped lands if possible
+    - Optimize land count and quality (MAINTAIN 35-38 lands for Commander)
+    - Cut ONLY poor utility lands or excessive basics if curve is very low
     - Balance color fixing vs utility
+    - **WARNING**: These iterations should rarely cut below 35 lands in Commander
 
 10. **Balanced/Holistic Focus** (Iterations 91-100)
     - Consider all factors equally
@@ -101,6 +102,18 @@ Use the **same analytical process as reduce-deck-size**:
 2. Consider the current iteration's focus/priority
 3. Identify exactly N cards to cut (where N = current size - target size)
 4. Provide brief reasoning based on current focus
+
+**CRITICAL: Maintain Proper Land Counts**
+
+- **Commander decks need 35-38 lands minimum** (never go below 35)
+- **Standard/Modern decks need 23-26 lands minimum** (never go below 22)
+- **Land cuts should be RARE and only when:**
+    - Deck has exceptionally low mana curve (avg CMC < 2.5)
+    - Deck has 15+ mana rocks/dorks providing alternative sources
+    - You're cutting utility lands that underperform, not core manabase
+- **When in doubt, keep lands over spells**
+- **Count lands carefully** - don't accidentally cut more lands than intended
+- **Prioritize cutting spells** when reducing deck size, not lands
 
 **C. Create iteration file:**
 
@@ -245,6 +258,20 @@ Include:
 
 ## Important Guidelines
 
+### Land Count is Sacred
+
+**MOST IMPORTANT RULE: DO NOT CUT TOO MANY LANDS**
+
+- Commander decks MUST have 35-38 lands (never less than 35)
+- Standard/Modern decks MUST have 23-26 lands (never less than 22)
+- Only cut lands if:
+    - Replacing with mana rocks/dorks (and deck still has 35+ lands total)
+    - Average CMC is exceptionally low (< 2.5) AND deck has 15+ ramp sources
+    - Cutting clearly bad utility lands (not core manabase)
+- When reducing deck size, prioritize cutting spells, NOT lands
+- Count your lands in every iteration to verify you haven't gone below minimum
+- If you find yourself cutting lands to hit target size, **cut more spells instead**
+
 ### Quality Over Speed
 
 - Each iteration should use **real AI analysis**, not random selection
@@ -372,3 +399,11 @@ Use **reduce-deck-size prompt** when:
 - More expensive in terms of API calls
 - Still may miss meta-specific considerations
 - Statistical consensus may not match your playstyle
+
+## Common Mistakes to Avoid
+
+1. **Cutting too many lands** - Most common error! Always verify land count stays at 35-38 for Commander
+2. **Over-optimizing mana curve** - Don't sacrifice powerful high-CMC cards just for curve smoothness
+3. **Ignoring commander synergy** - Cards that enable your commander are more valuable than raw power
+4. **Cutting all "bad" cards at once** - Some flex slots need to stay, don't only keep perfect cards
+5. **Not reading oracle text** - Make decisions based on actual card text from cache, not assumptions
