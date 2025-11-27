@@ -187,34 +187,98 @@ export function validateCategoryCounts(filePath: string): { valid: boolean; erro
     };
 }
 
+/**
+ * Counts cards from command-line arguments
+ * Supports formats: "4 Card Name", "4x Card Name", "Card Name"
+ */
+export function countCardsFromArgs(cardArgs: string[]): DeckCount {
+    const cards: CardCount[] = [];
+    let totalCards = 0;
+
+    for (const arg of cardArgs) {
+        const trimmed = arg.trim();
+        if (!trimmed) continue;
+
+        // Parse: "4 Card Name" or "4x Card Name" or "Card Name"
+        const cardMatch = trimmed.match(/^(\d+)x?\s+(.+)$/) || trimmed.match(/^(.+)$/);
+        if (cardMatch) {
+            let quantity: number;
+            let cardName: string;
+
+            if (cardMatch[2]) {
+                quantity = parseInt(cardMatch[1]);
+                cardName = cardMatch[2].trim();
+            } else {
+                quantity = 1;
+                cardName = cardMatch[1].trim();
+            }
+
+            if (cardName) {
+                cards.push({ name: cardName, quantity });
+                totalCards += quantity;
+            }
+        }
+    }
+
+    return {
+        totalCards,
+        uniqueCards: cards.length,
+        cardsByCategory: new Map(),
+        cards,
+    };
+}
+
 // CLI usage
 if (require.main === module) {
     const args = process.argv.slice(2);
 
     if (args.length === 0) {
-        console.error("Usage: ts-node card-counter.ts <deck-file> [--validate]");
+        console.error("Usage:");
+        console.error("  Count from file:  ts-node card-counter.ts <deck-file> [--validate]");
+        console.error(
+            '  Count from args:  ts-node card-counter.ts "7 Plains" "11 Swamp" "1 Clavileño"'
+        );
+        console.error("");
+        console.error("Examples:");
+        console.error('  npm run count "4 Lightning Bolt" "20 Mountain"');
+        console.error("  npx ts-node src/card-counter.ts decks/my-deck.txt");
         process.exit(1);
     }
 
-    const filePath = args[0];
-    const validate = args.includes("--validate");
+    // Check if first arg is a file path
+    const firstArg = args[0];
+    const isFilePath =
+        firstArg.includes("/") || firstArg.includes("\\") || firstArg.endsWith(".txt");
 
-    if (!fs.existsSync(filePath)) {
-        console.error(`File not found: ${filePath}`);
-        process.exit(1);
-    }
+    if (isFilePath && fs.existsSync(firstArg)) {
+        // File-based counting
+        const filePath = firstArg;
+        const validate = args.includes("--validate");
 
-    const count = countCardsInFile(filePath);
-    console.log(formatDeckCount(count));
+        const count = countCardsInFile(filePath);
+        console.log(formatDeckCount(count));
 
-    if (validate) {
-        console.log("\nValidating category counts...");
-        const validation = validateCategoryCounts(filePath);
-        if (validation.valid) {
-            console.log("✓ All category counts are correct");
-        } else {
-            console.log("✗ Found errors:");
-            validation.errors.forEach((error) => console.log(`  - ${error}`));
+        if (validate) {
+            console.log("\nValidating category counts...");
+            const validation = validateCategoryCounts(filePath);
+            if (validation.valid) {
+                console.log("✓ All category counts are correct");
+            } else {
+                console.log("✗ Found errors:");
+                validation.errors.forEach((error) => console.log(`  - ${error}`));
+            }
+        }
+    } else {
+        // Args-based counting
+        const count = countCardsFromArgs(args);
+        console.log(formatDeckCount(count));
+
+        // Show individual card breakdown
+        if (count.cards.length > 0) {
+            console.log("\nCard Breakdown:");
+            for (const card of count.cards) {
+                console.log(`  ${card.quantity}x ${card.name}`);
+            }
         }
     }
 }
