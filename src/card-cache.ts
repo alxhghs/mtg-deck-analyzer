@@ -7,9 +7,16 @@ export class CardCache {
     private cacheFile: string;
     private cache: Map<string, CachedCard>;
 
-    constructor(cacheDir: string = "./cache") {
-        this.cacheDir = cacheDir;
-        this.cacheFile = path.join(cacheDir, "cards.json");
+    constructor(cacheFilePath?: string) {
+        if (cacheFilePath) {
+            // Use per-deck cache file
+            this.cacheFile = cacheFilePath;
+            this.cacheDir = path.dirname(cacheFilePath);
+        } else {
+            // Fallback to global cache
+            this.cacheDir = "./cache";
+            this.cacheFile = path.join(this.cacheDir, "cards.json");
+        }
         this.cache = new Map();
         this.loadCache();
     }
@@ -39,13 +46,25 @@ export class CardCache {
     }
 
     /**
-     * Save cache to disk
+     * Save cache to disk (minimal format)
      */
     private saveCache(): void {
         try {
-            const cacheData: Record<string, CachedCard> = {};
+            const cacheData: Record<string, { card: any; cachedAt: string }> = {};
             this.cache.forEach((value, key) => {
-                cacheData[key] = value;
+                // Store only essential fields
+                cacheData[key] = {
+                    card: {
+                        name: value.card.name,
+                        mana_cost: value.card.mana_cost,
+                        cmc: value.card.cmc,
+                        type_line: value.card.type_line,
+                        oracle_text: value.card.oracle_text,
+                        colors: value.card.colors,
+                        color_identity: value.card.color_identity,
+                    },
+                    cachedAt: value.cachedAt,
+                };
             });
 
             fs.writeFileSync(this.cacheFile, JSON.stringify(cacheData, null, 2));

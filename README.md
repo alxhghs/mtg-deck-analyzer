@@ -105,12 +105,14 @@ mtg-deck-builder/
 │   └── deck-analyzer.ts      # Deck analysis logic
 ├── decks/                     # Your deck collection
 │   ├── standard/             # Standard format decks
+│   │   └── deck-name/
+│   │       ├── moxfield.txt          # Deck list
+│   │       └── moxfield-cache.json   # Per-deck card cache
 │   ├── modern/               # Modern format decks
 │   ├── commander/            # Commander/EDH decks
 │   ├── other/                # Other formats
 │   └── README.md             # Deck organization guide
-├── cache/                     # Card cache directory (auto-created)
-│   └── cards.json            # Cached card data
+├── cache/                     # Global cache directory (legacy)
 ├── package.json
 └── tsconfig.json
 ```
@@ -149,13 +151,20 @@ The application uses the [Scryfall API](https://scryfall.com/docs/api) to fetch 
 
 ## Cache Management
 
-Card data is automatically cached in `./cache/cards.json`. This:
+Card data is automatically cached per-deck in `<deck-name>-cache.json` files next to each decklist. This approach:
 
-- Speeds up repeated deck analyses
-- Reduces API calls
-- Works offline for previously fetched cards
+- **Keeps cache files small** - Each deck has only the cards it needs (~30-60KB)
+- **Fits in AI context windows** - Small cache files can be read by Copilot for better recommendations
+- **Speeds up repeated analyses** - No need to re-fetch cards
+- **Works offline** - Previously analyzed decks work without internet
 
-To clear the cache, simply delete the `cache` directory.
+Each deck gets its own cache file (e.g., `moxfield-cache.json`, `organized-cache.json`) containing minimal card data:
+
+- Card name, mana cost, CMC
+- Type line and oracle text
+- Colors and color identity
+
+To clear a deck's cache, delete its `*-cache.json` file.
 
 ## Scripts
 

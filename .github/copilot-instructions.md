@@ -28,7 +28,10 @@ This is a TypeScript Node.js application that analyzes Magic: The Gathering (MTG
 
 ### Caching (`src/card-cache.ts`)
 
-- Stores fetched cards in `cache/cards.json`
+- Stores fetched cards in per-deck cache files (e.g., `moxfield-cache.json`)
+- Each deck gets its own cache file in the same directory as the deck file
+- Cache files are small (~30-60KB) and contain minimal card data:
+    - `name`, `mana_cost`, `cmc`, `type_line`, `oracle_text`, `colors`, `color_identity`
 - Reduces API calls by caching previously fetched cards
 - Saves timestamp for each cached card
 
@@ -63,6 +66,8 @@ Each deck is stored in its own folder within the format directory:
 Within each deck folder:
 
 - `moxfield.txt` - Original imported decklist from Moxfield
+- `moxfield-cache.json` - Per-deck card cache with minimal card data (auto-generated)
+- `organized.txt` - Deck organized by card function (optional)
 - Additional variant files can be created for different configurations (e.g., `budget.txt`, `competitive.txt`, `cuts.txt`)
 
 ## Usage Commands
@@ -91,24 +96,30 @@ When the user asks about a deck by name (e.g., "help me get the blood-rites deck
 2. **If deck exists locally:**
     - Run `npm run dev decks/<format>/<deck-name>/moxfield.txt` to analyze it
     - Read the deck file to see current card list
-    - Read `cache/cards.json` to access detailed card information for recommendations
+    - **Read `decks/<format>/<deck-name>/moxfield-cache.json`** to access detailed card information for recommendations
+    - The cache file contains minimal but complete card data: mana cost, type, oracle text, colors
 
 3. **If deck doesn't exist or user wants to update from Moxfield:**
     - Ask user for Moxfield URL if not clear from context
     - Run `npm run import <moxfield-url> <deck-name>` (optional deck name, will use Moxfield name if omitted)
     - Then run analysis: `npm run dev decks/<format>/<deck-name>/moxfield.txt`
-    - Read `cache/cards.json` for card details
+    - **Read `decks/<format>/<deck-name>/moxfield-cache.json`** for card details
 
-4. **Use the cached card data for recommendations:**
-    - Read `cache/cards.json` to access all card details (mana cost, type, abilities, colors)
+4. **Use the per-deck cached card data for recommendations:**
+    - **ALWAYS read the deck's own cache file:** `decks/<format>/<deck-name>/<deckfile>-cache.json`
+    - Each deck has its own cache file (e.g., `moxfield-cache.json`, `organized-cache.json`)
+    - Cache contains minimal essential data: `name`, `mana_cost`, `cmc`, `type_line`, `oracle_text`, `colors`, `color_identity`
+    - Cache files are small (~30-60KB, ~1000-2000 lines) and fit comfortably in context windows
+    - Use this data to make specific, accurate recommendations based on actual card abilities and interactions
     - Consider the deck's mana curve, color distribution, and card types from analysis
-    - Make specific, data-driven recommendations based on actual card information
+    - Reference oracle text to understand card synergies and combos
 
 5. **For deck reduction requests (getting to exactly 100 cards, etc.):**
     - Count current cards in the deck
-    - Identify redundant effects or weakest cards
+    - **Read the deck's cache file** to understand what each card does
+    - Identify redundant effects or weakest cards by comparing oracle text
     - Suggest specific cuts based on mana curve, redundancy, or strategy fit
-    - Reference actual card data from cache to justify recommendations
+    - Reference actual card data from the per-deck cache to justify recommendations
     - Create variant files in the same deck folder with different configurations (e.g., `cuts-recommendation.txt`, `budget-version.txt`)
 
 ## Creating Deck Recommendations and Variants

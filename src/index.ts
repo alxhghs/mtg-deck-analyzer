@@ -28,8 +28,13 @@ async function main() {
 
         console.log(`Found ${deck.cards.length} unique cards (${deck.totalCards} total)\n`);
 
+        // Create per-deck cache file in the same directory as the deck
+        const deckDir = path.dirname(decklistPath);
+        const deckName = path.basename(decklistPath, path.extname(decklistPath));
+        const cacheFilePath = path.join(deckDir, `${deckName}-cache.json`);
+
         // Initialize cache and API client
-        const cache = new CardCache();
+        const cache = new CardCache(cacheFilePath);
         const client = new ScryfallClient();
 
         // Check which cards we need to fetch

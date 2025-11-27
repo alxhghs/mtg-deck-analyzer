@@ -34,3 +34,14 @@ export interface CachedCard {
     card: Card;
     cachedAt: string;
 }
+
+// Minimal card format for compact cache storage
+export interface MinimalCard {
+    name: string;
+    mana_cost?: string;
+    cmc: number;
+    type_line: string;
+    oracle_text?: string;
+    colors?: string[];
+    color_identity?: string[];
+}
