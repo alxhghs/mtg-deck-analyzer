@@ -1,6 +1,8 @@
 ---
 title: Update Deck
 description: Import a deck from Moxfield and create an organized decklist
+agent: agent
+model: Claude Sonnet 4.5
 ---
 
 # Update Deck from Moxfield

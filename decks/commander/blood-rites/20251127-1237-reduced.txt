@@ -1,0 +1,125 @@
+# Blood Rites - Reduced to 99 Cards
+# Created: 2025-11-27 12:37
+# Based on: moxfield.txt
+# Goal: Reduce deck to 99 cards (Commander format)
+# Cards Cut (14): Thriving Moor, Silverquill Campus, Scoured Barrens, Reliquary Tower, Windbrisk Heights, Dusk Legion Zealot, Nullpriest of Oblivion, Sanguine Spy, Scourge of the Undercity, Nighthawk Scavenger, Master of Dark Rites, Dusk Legion Sergeant, Order of Sacred Dusk, Diabolic Tutor
+# Strategy: Maintained 36 lands, removed weakest vampires and slow lands, kept aristocrats synergy intact
+
+## Commander (1)
+1 Clavileño, First of the Blessed
+
+## Ramp (7)
+1 Sol Ring
+1 Arcane Signet
+1 Orzhov Signet
+1 Talisman of Hierarchy
+1 Dark Ritual
+1 Skullclamp
+1 Bolas's Citadel
+
+## Draw (8)
+1 Necropotence
+1 Phyrexian Arena
+1 Vampiric Rites
+1 Village Rites
+1 Read the Bones
+1 Pact of the Serpent
+1 Champion of Dusk
+1 Welcoming Vampire
+
+## Tutors (2)
+1 Demonic Tutor
+1 Forerunner of the Legion
+
+## Removal (11)
+1 Anguished Unmaking
+1 Path to Exile
+1 Swords to Plowshares
+1 Despark
+1 Damn
+1 Infernal Grasp
+1 Austere Command
+1 Olivia's Wrath
+1 Terror Tide
+1 Rite of Oblivion
+1 Exsanguinate
+
+## Lifegain/Drain Engines (13)
+1 Vito, Thorn of the Dusk Rose
+1 Sanguine Bond
+1 Exquisite Blood
+1 Blood Artist
+1 Falkenrath Noble
+1 Bastion of Remembrance
+1 Cruel Celebrant
+1 Vraan, Executioner Thane
+1 Marauding Blight-Priest
+1 Enduring Tenacity
+1 Bloodthirsty Conqueror
+1 Sanctum Seeker
+1 Elenda's Hierophant
+
+## Aristocrats/Sac Outlets (4)
+1 Viscera Seer
+1 Bartolomé del Presidio
+1 Indulgent Aristocrat
+1 Yahenni, Undying Partisan
+
+## Token Generation (3)
+1 Charismatic Conqueror
+1 Mavren Fein, Dusk Apostle
+1 Mondrak, Glory Dominus
+
+## Recursion (3)
+1 Oathsworn Vampire
+1 Bloodghast
+1 Promise of Aclazotz // Foul Rebirth
+
+## Tribal Synergy (11)
+1 Edgar, Charmed Groom // Edgar Markov's Coffin
+1 Cordial Vampire
+1 Preacher of the Schism
+1 Carmen, Cruel Skymarcher
+1 Knight of the Ebon Legion
+1 Malakir Bloodwitch
+1 Drana, Liberator of Malakir
+1 Twilight Prophet
+1 Vampire of the Dire Moon
+1 Elenda, the Dusk Rose
+
+## Utility/Support (6)
+1 Roaming Throne
+1 Teysa Karlov
+1 Drivnod, Carnage Dominus
+1 Swiftfoot Boots
+1 Authority of the Consuls
+1 Sorin, Imperious Bloodlord
+
+## Lands (36)
+# Duals & Shocklands (10)
+1 Godless Shrine
+1 Vault of Champions
+1 Fetid Heath
+1 Isolated Chapel
+1 Shineshadow Snarl
+1 Caves of Koilos
+1 Shadowy Backstreet
+1 Tainted Field
+1 Command Tower
+1 Path of Ancestry
+
+# Tribal Lands (3)
+1 Secluded Courtyard
+1 Unclaimed Territory
+1 Voldaren Estate
+
+# Utility Lands (5)
+1 Vault of the Archangel
+1 Myriad Landscape
+1 Bojuka Bog
+1 Rogue's Passage
+1 Orzhov Basilica
+
+# Basics (18)
+9 Plains
+9 Swamp

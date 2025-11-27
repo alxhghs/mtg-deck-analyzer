@@ -1,6 +1,8 @@
 ---
 title: Reduce Deck Size
 description: Analyze a deck and recommend cards to cut to reach target deck size
+agent: agent
+model: Claude Sonnet 4.5
 ---
 
 # Reduce Deck Size
@@ -50,9 +52,12 @@ You are helping the user reduce their Magic: The Gathering deck to a specific si
 8. **After user accepts** the recommendations:
     - Create a timestamped decklist file: `decks/<format>/<deck-name>/YYYYMMDD-HHMM-reduced.txt`
     - Use the current date and time for the timestamp
-    - Copy the deck structure (organized by category if using organized.txt as base)
+    - **Organize by card type** (Creatures, Instants, Sorceries, Enchantments, Artifacts, Planeswalkers, Lands)
     - Remove the recommended cuts
+    - **CRITICAL: Double-check your counts** - verify the total adds up to exactly 99 (or target count)
+    - **Count each card type carefully** - including basics (e.g., "9 Swamp" means 9 cards, not 1)
     - Include a header explaining what was cut and why:
+
         ```
         # <Deck Name> - Reduced to <N> Cards
         # Created: <timestamp>
@@ -60,6 +65,31 @@ You are helping the user reduce their Magic: The Gathering deck to a specific si
         # Goal: Reduce deck to <target> cards
         # Cards Cut (<X>): <list of cut cards>
         # Strategy: <brief note on what was prioritized>
+
+        ## Creatures (X)
+        1 Card Name
+        ...
+
+        ## Instants (X)
+        ...
+
+        ## Sorceries (X)
+        ...
+
+        ## Enchantments (X)
+        ...
+
+        ## Artifacts (X)
+        ...
+
+        ## Planeswalkers (X)
+        ...
+
+        ## Lands (X)
+        1 Land Name
+        ...
+        9 Swamp
+        9 Plains
         ```
 
 ## Example Interaction
@@ -76,6 +106,8 @@ You are helping the user reduce their Magic: The Gathering deck to a specific si
 6. Present 14 recommended cuts with explanations
 7. Wait for approval
 8. Only after approval: Create `decks/commander/blood-rites/20251127-1430-reduced.txt`
+9. **Organize by card type** (Creatures, Instants, Sorceries, etc.)
+10. **Verify counts**: Count each section, including multi-quantity basics, to ensure total is exactly 99
 
 ## Important Notes
 
@@ -85,3 +117,6 @@ You are helping the user reduce their Magic: The Gathering deck to a specific si
 - Provide clear reasoning for each cut
 - Be prepared to discuss alternatives if the user disagrees with specific cuts
 - The timestamp format is: `YYYYMMDD-HHMM` (e.g., `20251127-1430`)
+- **CRITICAL: Verify your math** - when counting "9 Swamp", that's 9 cards, not 1
+- **Double-check totals** - add up all sections to ensure you hit the exact target count
+- Organize the final decklist by card type, not by function/strategy
