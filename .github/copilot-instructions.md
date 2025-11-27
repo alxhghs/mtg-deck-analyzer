@@ -111,6 +111,63 @@ When the user asks about a deck by name (e.g., "help me get the blood-rites deck
     - Reference actual card data from cache to justify recommendations
     - Create variant files in the same deck folder with different configurations (e.g., `cuts-recommendation.txt`, `budget-version.txt`)
 
+## Creating Deck Recommendations and Variants
+
+When the user asks for deck recommendations or wants to try different strategies, create timestamped variant files:
+
+### File Naming Convention
+
+Use this format: `YYYYMMDD-HHMM-description.txt`
+
+Examples:
+
+- `20251127-1430-drain-focus.txt` - Focus on drain effects
+- `20251127-1445-budget-version.txt` - Budget-friendly version
+- `20251127-1500-aggro-variant.txt` - More aggressive build
+- `20251127-1515-cuts-to-100.txt` - Cuts to reach 100 cards
+
+### Creating Recommendation Files
+
+1. **Analyze the current deck** (read moxfield.txt and organized.txt if available)
+2. **Understand the request** (more aggro, budget, specific theme, etc.)
+3. **Create a new timestamped file** in the deck folder with your recommendations
+4. **Use the same format as organized.txt** with categories and card counts
+5. **Include a header explaining the changes:**
+
+```
+# <Deck Name> - <Variant Description>
+# Created: <timestamp>
+# Based on: moxfield.txt
+# Goal: <description of what this variant aims to achieve>
+# Changes: <summary of major changes>
+
+## Category Name (X)
+1 Card Name
+...
+```
+
+### Best Practices
+
+- **Keep history**: Never delete old recommendation files - they serve as version history
+- **Be specific**: Include detailed explanations in the header about why changes were made
+- **Reference cards by name**: Make it easy to compare with other versions
+- **Track the delta**: Mention what cards were added/removed compared to the base deck
+- **Timestamp everything**: Use current date/time for the filename (YYYYMMDD-HHMM format)
+- **Descriptive names**: Use clear, concise descriptions (drain-focus, token-heavy, control-build, etc.)
+
+### Example Workflow
+
+User: "Make the blood-rites deck more focused on drain effects"
+
+You should:
+
+1. Read `decks/commander/blood-rites/moxfield.txt` and `organized.txt`
+2. Analyze current drain effects in the deck
+3. Create `decks/commander/blood-rites/20251127-1430-drain-focus.txt`
+4. Include more drain payoffs, cut non-synergistic cards
+5. Explain the changes in the header
+6. Organize by categories like the organized.txt format
+
 ## Card Categorization and Tagging
 
 When organizing cards by function (for variant decklists or analysis), use these standard categories:
