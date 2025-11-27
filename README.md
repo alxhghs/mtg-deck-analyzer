@@ -22,18 +22,47 @@ npm install
 
 ## Usage
 
+### Import from Moxfield
+
+Import decks directly from Moxfield (must be public):
+
+```bash
+# Using full URL
+npm run import https://www.moxfield.com/decks/abc123xyz
+
+# Using just the deck ID
+npm run import abc123xyz
+
+# Specify custom output path
+npm run import abc123xyz decks/modern/my-deck.txt
+```
+
+The deck will be automatically saved to the appropriate format folder based on its format.
+
 ### Analyze a Deck
 
 ```bash
-npm run dev example-deck.txt
+npm run dev decks/standard/red-deck-wins.txt
+npm run dev decks/modern/your-deck.txt
+npm run dev decks/commander/your-commander.txt
 ```
 
 Or build and run:
 
 ```bash
 npm run build
-npm start example-deck.txt
+npm start decks/standard/red-deck-wins.txt
 ```
+
+### Organizing Your Decks
+
+Store your decklists in the `decks/` directory, organized by format:
+- `decks/standard/` - Standard format
+- `decks/modern/` - Modern format  
+- `decks/commander/` - Commander/EDH
+- `decks/other/` - Pioneer, Legacy, Pauper, etc.
+
+See `decks/README.md` for more details.
 
 ### Decklist Format
 
@@ -68,9 +97,14 @@ mtg-deck-builder/
 │   ├── card-cache.ts         # JSON file caching system
 │   ├── deck-parser.ts        # Decklist parser
 │   └── deck-analyzer.ts      # Deck analysis logic
+├── decks/                     # Your deck collection
+│   ├── standard/             # Standard format decks
+│   ├── modern/               # Modern format decks
+│   ├── commander/            # Commander/EDH decks
+│   ├── other/                # Other formats
+│   └── README.md             # Deck organization guide
 ├── cache/                     # Card cache directory (auto-created)
 │   └── cards.json            # Cached card data
-├── example-deck.txt          # Sample decklist
 ├── package.json
 └── tsconfig.json
 ```
