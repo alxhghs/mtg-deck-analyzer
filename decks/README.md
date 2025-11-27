@@ -15,10 +15,11 @@ decks/
 ## Naming Convention
 
 Use descriptive names for your deck files:
-- `red-deck-wins.txt`
-- `azorius-control.txt`
-- `elves-combo.txt`
-- `kess-storm.txt` (for Commander)
+
+-   `red-deck-wins.txt`
+-   `azorius-control.txt`
+-   `elves-combo.txt`
+-   `kess-storm.txt` (for Commander)
 
 ## Decklist Format
 
@@ -64,10 +65,11 @@ npm run dev decks/commander/kess-storm.txt
 ## Getting AI Recommendations
 
 After analyzing a deck:
+
 1. Review the deck analysis output
 2. Open GitHub Copilot Chat
 3. Ask for specific recommendations:
-   - "What improvements would you suggest for this deck?"
-   - "What are good sideboard options against control?"
-   - "How can I improve the mana base?"
-   - "What budget alternatives exist for expensive cards?"
+    - "What improvements would you suggest for this deck?"
+    - "What are good sideboard options against control?"
+    - "How can I improve the mana base?"
+    - "What budget alternatives exist for expensive cards?"

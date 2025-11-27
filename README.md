@@ -4,15 +4,15 @@ A TypeScript Node.js application that analyzes Magic: The Gathering decklists by
 
 ## Features
 
-- 📋 Parse decklist files in common formats
-- 🌐 Fetch card data from Scryfall API
-- 💾 Cache card data locally in JSON files
-- 📊 Analyze deck composition:
-  - Color distribution
-  - Mana curve
-  - Card type breakdown
-  - Average CMC
-- 🤖 Ready for AI-powered recommendations via GitHub Copilot Chat
+-   📋 Parse decklist files in common formats
+-   🌐 Fetch card data from Scryfall API
+-   💾 Cache card data locally in JSON files
+-   📊 Analyze deck composition:
+    -   Color distribution
+    -   Mana curve
+    -   Card type breakdown
+    -   Average CMC
+-   🤖 Ready for AI-powered recommendations via GitHub Copilot Chat
 
 ## Installation
 
@@ -35,7 +35,12 @@ npm run import abc123xyz
 
 # Specify custom output path
 npm run import abc123xyz decks/modern/my-deck.txt
+
+# Force refresh (bypass 1-hour cache)
+npm run import -- abc123xyz --force
 ```
+
+**Caching:** Deck imports are cached for 1 hour. Subsequent imports within that time will use the cached version unless you use the `--force` flag.
 
 The deck will be automatically saved to the appropriate format folder based on its format.
 
@@ -57,10 +62,11 @@ npm start decks/standard/red-deck-wins.txt
 ### Organizing Your Decks
 
 Store your decklists in the `decks/` directory, organized by format:
-- `decks/standard/` - Standard format
-- `decks/modern/` - Modern format  
-- `decks/commander/` - Commander/EDH
-- `decks/other/` - Pioneer, Legacy, Pauper, etc.
+
+-   `decks/standard/` - Standard format
+-   `decks/modern/` - Modern format
+-   `decks/commander/` - Commander/EDH
+-   `decks/other/` - Pioneer, Legacy, Pauper, etc.
 
 See `decks/README.md` for more details.
 
@@ -124,12 +130,12 @@ After running the analyzer, use GitHub Copilot Chat in VS Code to get AI-powered
 
 ### Example Prompts
 
-- "Based on this deck analysis, what cards would improve the mana curve?"
-- "What are this deck's weaknesses against control decks?"
-- "Suggest 5 sideboard cards for this strategy"
-- "How can I improve the consistency of this deck?"
-- "What are some budget alternatives for the expensive cards?"
-- "Analyze this deck's matchup against aggro/midrange/control"
+-   "Based on this deck analysis, what cards would improve the mana curve?"
+-   "What are this deck's weaknesses against control decks?"
+-   "Suggest 5 sideboard cards for this strategy"
+-   "How can I improve the consistency of this deck?"
+-   "What are some budget alternatives for the expensive cards?"
+-   "Analyze this deck's matchup against aggro/midrange/control"
 
 The analyzer provides all the deck data in an easy-to-read format that Copilot can understand and analyze.
 
@@ -137,25 +143,26 @@ The analyzer provides all the deck data in an easy-to-read format that Copilot c
 
 The application uses the [Scryfall API](https://scryfall.com/docs/api) to fetch card data. The API is free and doesn't require authentication, but please be respectful:
 
-- Includes 100ms delay between requests
-- Caches all fetched cards to minimize API calls
-- Follows Scryfall's rate limiting guidelines
+-   Includes 100ms delay between requests
+-   Caches all fetched cards to minimize API calls
+-   Follows Scryfall's rate limiting guidelines
 
 ## Cache Management
 
 Card data is automatically cached in `./cache/cards.json`. This:
-- Speeds up repeated deck analyses
-- Reduces API calls
-- Works offline for previously fetched cards
+
+-   Speeds up repeated deck analyses
+-   Reduces API calls
+-   Works offline for previously fetched cards
 
 To clear the cache, simply delete the `cache` directory.
 
 ## Scripts
 
-- `npm run dev <file>` - Run with ts-node (development)
-- `npm run build` - Compile TypeScript to JavaScript
-- `npm start <file>` - Run compiled JavaScript
-- `npm run analyze <file>` - Build and run in one command
+-   `npm run dev <file>` - Run with ts-node (development)
+-   `npm run build` - Compile TypeScript to JavaScript
+-   `npm start <file>` - Run compiled JavaScript
+-   `npm run analyze <file>` - Build and run in one command
 
 ## Example Output
 
