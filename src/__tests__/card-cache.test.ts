@@ -287,21 +287,22 @@ describe("CardCache", () => {
             cache.set("Lightning Bolt", mockCard);
 
             const parsed = JSON.parse(savedData);
-            const savedCard = parsed["Lightning Bolt"].card;
+            const savedCard = parsed["Lightning Bolt"];
 
-            // Should have minimal fields
-            expect(savedCard).toHaveProperty("name");
-            expect(savedCard).toHaveProperty("mana_cost");
-            expect(savedCard).toHaveProperty("cmc");
-            expect(savedCard).toHaveProperty("type_line");
-            expect(savedCard).toHaveProperty("oracle_text");
-            expect(savedCard).toHaveProperty("colors");
-            expect(savedCard).toHaveProperty("color_identity");
+            // Should have minimal fields with compact keys
+            expect(savedCard).toHaveProperty("mc"); // mana_cost
+            expect(savedCard).toHaveProperty("cmc"); // cmc
+            expect(savedCard).toHaveProperty("type"); // type_line
+            expect(savedCard).toHaveProperty("text"); // oracle_text
+            expect(savedCard).toHaveProperty("colors"); // colors
+            expect(savedCard).toHaveProperty("ci"); // color_identity
 
             // Should not have extra fields
+            expect(savedCard).not.toHaveProperty("name");
             expect(savedCard).not.toHaveProperty("id");
             expect(savedCard).not.toHaveProperty("set");
             expect(savedCard).not.toHaveProperty("rarity");
+            expect(savedCard).not.toHaveProperty("cachedAt");
         });
     });
 

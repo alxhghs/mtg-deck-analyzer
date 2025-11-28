@@ -22,7 +22,7 @@ export class CardCache {
     }
 
     /**
-     * Load cache from disk
+     * Load cache from disk (supports both old and new compact format)
      */
     private loadCache(): void {
         try {
@@ -34,8 +34,26 @@ export class CardCache {
                 const data = fs.readFileSync(this.cacheFile, "utf-8");
                 const cacheData = JSON.parse(data);
 
-                Object.entries(cacheData).forEach(([name, cachedCard]) => {
-                    this.cache.set(name, cachedCard as CachedCard);
+                Object.entries(cacheData).forEach(([name, entry]: [string, any]) => {
+                    // Support new compact format and old format
+                    const card: Card =
+                        entry.mc !== undefined
+                            ? {
+                                  name: name,
+                                  mana_cost: entry.mc,
+                                  cmc: entry.cmc,
+                                  type_line: entry.type,
+                                  oracle_text: entry.text,
+                                  colors: entry.colors,
+                                  color_identity: entry.ci,
+                              }
+                            : entry.card;
+
+                    const cachedCard: CachedCard = {
+                        card: card,
+                        cachedAt: entry.cachedAt || new Date().toISOString(),
+                    };
+                    this.cache.set(name, cachedCard);
                 });
 
                 console.log(`Loaded ${this.cache.size} cards from cache`);
@@ -46,24 +64,21 @@ export class CardCache {
     }
 
     /**
-     * Save cache to disk (minimal format)
+     * Save cache to disk (minimal format optimized for AI context)
      */
     private saveCache(): void {
         try {
-            const cacheData: Record<string, { card: any; cachedAt: string }> = {};
+            const cacheData: Record<string, any> = {};
             this.cache.forEach((value, key) => {
-                // Store only essential fields
+                // Store only essential fields in compact format
+                // Using short keys to reduce token usage
                 cacheData[key] = {
-                    card: {
-                        name: value.card.name,
-                        mana_cost: value.card.mana_cost,
-                        cmc: value.card.cmc,
-                        type_line: value.card.type_line,
-                        oracle_text: value.card.oracle_text,
-                        colors: value.card.colors,
-                        color_identity: value.card.color_identity,
-                    },
-                    cachedAt: value.cachedAt,
+                    mc: value.card.mana_cost, // mana_cost
+                    cmc: value.card.cmc, // converted mana cost
+                    type: value.card.type_line, // type_line
+                    text: value.card.oracle_text, // oracle_text
+                    colors: value.card.colors, // colors array
+                    ci: value.card.color_identity, // color_identity
                 };
             });
 
