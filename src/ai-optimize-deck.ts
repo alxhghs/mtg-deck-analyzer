@@ -45,11 +45,7 @@ function countCardsInFile(filePath: string): { total: number; lands: number; uni
     }
 }
 
-function validateIterationFile(
-    filePath: string,
-    targetSize: number = 100,
-    minLands: number = 37
-): ValidationResult {
+function validateIterationFile(filePath: string, targetSize: number = 100): ValidationResult {
     const result: ValidationResult = {
         file: path.basename(filePath),
         valid: true,
@@ -81,19 +77,6 @@ function validateIterationFile(
         );
     }
 
-    if (counts.lands < minLands) {
-        result.valid = false;
-        result.errors.push(
-            `Land count is ${counts.lands}, minimum is ${minLands} for Commander (${minLands - counts.lands} lands short)`
-        );
-    }
-
-    if (counts.lands > 38) {
-        result.warnings.push(
-            `Land count is ${counts.lands}, which is higher than typical 37-38 for Commander`
-        );
-    }
-
     // Check file content for common issues
     const content = fs.readFileSync(filePath, "utf-8");
 
@@ -116,11 +99,7 @@ function validateIterationFile(
     return result;
 }
 
-function validateAllIterations(
-    folderPath: string,
-    targetSize: number = 100,
-    minLands: number = 35
-): void {
+function validateAllIterations(folderPath: string, targetSize: number = 100): void {
     console.log(`\n🔍 Validating all iterations in ${folderPath}\n`);
 
     const files = fs
@@ -138,7 +117,7 @@ function validateAllIterations(
 
     for (const file of files) {
         const filePath = path.join(folderPath, file);
-        const result = validateIterationFile(filePath, targetSize, minLands);
+        const result = validateIterationFile(filePath, targetSize);
         results.push(result);
 
         if (!result.valid) {
