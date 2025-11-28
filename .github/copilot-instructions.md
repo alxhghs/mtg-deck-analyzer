@@ -278,11 +278,11 @@ Sorcery: 8 (8.1%)
 Enchantment: 6 (6.1%)
 Artifact: 8 (8.1%)
 Planeswalker: 1 (1.0%)
-Land: 36 (36.4%)
+Land: 37 (37.4%)
 
 ## Description
 
-This deck is a vampire tribal strategy focused on lifegain and drain effects. The commander creates demon tokens when vampires attack, providing a steady stream of value. The deck includes multiple drain engines that trigger when you gain life (Vito, Sanguine Bond, Exquisite Blood), creating powerful synergies. Aristocrats elements with sacrifice outlets provide additional value and resilience. The manabase is well-balanced with 36 lands, supporting a mid-range strategy that can both go wide with tokens and leverage powerful individual threats.
+This deck is a vampire tribal strategy focused on lifegain and drain effects. The commander creates demon tokens when vampires attack, providing a steady stream of value. The deck includes multiple drain engines that trigger when you gain life (Vito, Sanguine Bond, Exquisite Blood), creating powerful synergies. Aristocrats elements with sacrifice outlets provide additional value and resilience. The manabase is well-balanced with 37 lands, supporting a mid-range strategy that can both go wide with tokens and leverage powerful individual threats.
 
 ```
 

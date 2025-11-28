@@ -93,10 +93,10 @@ Each iteration should use a **different strategic lens** for analysis. Rotate th
     - Prioritize commander protection
 
 9. **Land Optimization Focus** (Iterations 81-90)
-    - Optimize land count and quality (MAINTAIN 35-38 lands for Commander)
+    - Optimize land count and quality (MAINTAIN 37-38 lands for Commander)
     - Cut ONLY poor utility lands or excessive basics if curve is very low
     - Balance color fixing vs utility
-    - **WARNING**: These iterations should rarely cut below 35 lands in Commander
+    - **WARNING**: These iterations should rarely cut below 37 lands in Commander
 
 10. **Balanced/Holistic Focus** (Iterations 91-100)
     - Consider all factors equally
@@ -114,7 +114,7 @@ Use the **same analytical process as reduce-deck-size**:
 
 **CRITICAL: Maintain Proper Land Counts**
 
-- **Commander decks need 35-38 lands minimum** (never go below 35)
+- **Commander decks need 37-38 lands minimum** (never go below 37)
 - **Standard/Modern decks need 23-26 lands minimum** (never go below 22)
 - **Land cuts should be RARE and only when:**
     - Deck has exceptionally low mana curve (avg CMC < 2.5)
@@ -314,10 +314,10 @@ Include:
 
 **MOST IMPORTANT RULE: DO NOT CUT TOO MANY LANDS**
 
-- Commander decks MUST have 35-38 lands (never less than 35)
+- Commander decks MUST have 37-38 lands (never less than 37)
 - Standard/Modern decks MUST have 23-26 lands (never less than 22)
 - Only cut lands if:
-    - Replacing with mana rocks/dorks (and deck still has 35+ lands total)
+    - Replacing with mana rocks/dorks (and deck still has 37+ lands total)
     - Average CMC is exceptionally low (< 2.5) AND deck has 15+ ramp sources
     - Cutting clearly bad utility lands (not core manabase)
 - When reducing deck size, prioritize cutting spells, NOT lands
@@ -454,7 +454,7 @@ Use **reduce-deck-size prompt** when:
 
 ## Common Mistakes to Avoid
 
-1. **Cutting too many lands** - Most common error! Always verify land count stays at 35-38 for Commander
+1. **Cutting too many lands** - Most common error! Always verify land count stays at 37-38 for Commander
 2. **Over-optimizing mana curve** - Don't sacrifice powerful high-CMC cards just for curve smoothness
 3. **Ignoring commander synergy** - Cards that enable your commander are more valuable than raw power
 4. **Cutting all "bad" cards at once** - Some flex slots need to stay, don't only keep perfect cards

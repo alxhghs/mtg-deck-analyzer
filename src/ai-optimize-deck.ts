@@ -48,7 +48,7 @@ function countCardsInFile(filePath: string): { total: number; lands: number; uni
 function validateIterationFile(
     filePath: string,
     targetSize: number = 100,
-    minLands: number = 35
+    minLands: number = 37
 ): ValidationResult {
     const result: ValidationResult = {
         file: path.basename(filePath),
@@ -90,7 +90,7 @@ function validateIterationFile(
 
     if (counts.lands > 38) {
         result.warnings.push(
-            `Land count is ${counts.lands}, which is higher than typical 35-38 for Commander`
+            `Land count is ${counts.lands}, which is higher than typical 37-38 for Commander`
         );
     }
 
