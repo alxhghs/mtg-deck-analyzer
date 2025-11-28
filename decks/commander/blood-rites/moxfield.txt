@@ -5,12 +5,10 @@
 # Commander (1)
 1 Clavileño, First of the Blessed
 
-# Mainboard (113)
+# Mainboard (112)
 1 Vito, Thorn of the Dusk Rose
 1 Knight of the Ebon Legion
-1 Necropotence
 1 Anguished Unmaking
-1 Godless Shrine
 1 Vampiric Rites
 1 Dark Ritual
 1 Demonic Tutor
@@ -29,7 +27,6 @@
 1 Vraan, Executioner Thane
 1 Drivnod, Carnage Dominus
 1 Teysa Karlov
-1 Vault of Champions
 1 Bartolomé del Presidio
 1 Path of Ancestry
 1 Arcane Signet
@@ -85,11 +82,9 @@
 1 Yahenni, Undying Partisan
 1 Cruel Celebrant
 1 Elenda, the Dusk Rose
-1 Shadowy Backstreet
 1 Enduring Tenacity
 1 Skullclamp
 1 Vampire of the Dire Moon
-1 Reliquary Tower
 1 Bloodthirsty Conqueror
 1 Phyrexian Arena
 1 Scourge of the Undercity
@@ -105,8 +100,8 @@
 1 Bolas's Citadel
 1 Mondrak, Glory Dominus
 1 Carmen, Cruel Skymarcher
-5 Plains
-9 Swamp
+6 Plains
+12 Swamp
 
 # Sideboard (29)
 1 Epicure of Blood

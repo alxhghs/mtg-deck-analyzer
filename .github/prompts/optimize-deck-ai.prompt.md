@@ -155,7 +155,24 @@ Unique Cards: X
 ...
 ```
 
-**D. Progress tracking:**
+**D. MANDATORY VALIDATION after creating each iteration file:**
+
+After creating each iteration file, you MUST validate it immediately:
+
+```bash
+npx ts-node src/ai-optimize-deck.ts validate decks/<format>/<deck-name>/YYYYMMDD-HHMM-ai-optimize/iteration-XXX.txt
+```
+
+If validation fails:
+
+- **STOP immediately**
+- **Fix the iteration file** to have exactly 100 cards and 35-38 lands
+- **Re-validate** before continuing
+- **DO NOT proceed to the next iteration** until current one passes validation
+
+This validation step is **NON-NEGOTIABLE** and prevents accumulating errors across iterations.
+
+**E. Progress tracking:**
 
 - Show progress every 10 iterations: "Completed 10/100 iterations..."
 - Include iteration focus: "Iteration 23: Removal/Interaction Focus"
@@ -169,12 +186,33 @@ Unique Cards: X
 
 After all iterations complete:
 
-**A. Calculate card frequencies:**
+**A. VALIDATE ALL ITERATIONS FIRST:**
+
+Before analyzing results, you MUST validate all iteration files:
+
+```bash
+npx ts-node src/ai-optimize-deck.ts validate-all decks/<format>/<deck-name>/YYYYMMDD-HHMM-ai-optimize/
+```
+
+This will check that ALL iterations:
+
+- Have exactly 100 cards (or target size)
+- Have 35-38 lands minimum for Commander
+- Include all required sections
+
+If ANY iteration fails validation:
+
+- **STOP the analysis process**
+- **Fix all failing iterations**
+- **Re-run validate-all** until all pass
+- **ONLY THEN proceed to analysis**
+
+**B. Calculate card frequencies:**
 
 - Track how many times each card was kept
 - Calculate percentage (kept_count / total_iterations × 100)
 
-**B. Create BEST-consolidated.txt:**
+**C. Create BEST-consolidated.txt:**
 
 Build the optimal deck by:
 
