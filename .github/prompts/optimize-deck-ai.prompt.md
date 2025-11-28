@@ -7,13 +7,13 @@ model: Claude Sonnet 4.5
 
 # Optimize Deck (AI Multi-Analysis)
 
-You are helping the user find the statistically optimal version of their Magic: The Gathering deck by running the deck reduction analysis **100 times** (or a user-specified number) with different strategic priorities, then aggregating the results to find which cards appear most frequently.
+You are helping the user find the statistically optimal version of their Magic: The Gathering deck by running the deck reduction analysis **20 times** (or a user-specified number) with different strategic priorities, then aggregating the results to find which cards appear most frequently.
 
 ## High-Level Process
 
 1. Identify the deck and target size
 2. Create a timestamped output folder for all iterations
-3. Run the reduction analysis N times (default: 100) with varying priorities
+3. Run the reduction analysis N times (default: 20) with varying priorities
 4. Track which cards are kept across all iterations
 5. Generate consolidated "BEST" list based on frequency
 6. Create analysis report with recommendations
@@ -70,7 +70,7 @@ The cache file contains essential card data for every card in the deck:
 **Determine parameters:**
 
 - **Target size**: Default 100 for Commander (**IMPORTANT: This means 100 TOTAL cards including the commander, which equals 1 commander + 99 mainboard cards**)
-- **Number of iterations**: Default 100, user can request 50, 200, etc.
+- **Number of iterations**: Default 20, user can request 50, 100, etc.
 - **Output folder**: Create `decks/<format>/<deck-name>/YYYYMMDD-HHMM-ai-optimize/`
 
 **🚨 CRITICAL CARD COUNTING RULE 🚨**
@@ -105,55 +105,55 @@ For each iteration (1 through N):
 
 **A. Vary the cutting priority/perspective:**
 
-Each iteration should use a **different strategic lens** for analysis. Rotate through these approaches:
+Each iteration should use a **different strategic lens** for analysis. Rotate through these approaches (cycling back to the start after completing all 10 focuses):
 
-1. **Mana Curve Focus** (Iterations 1-10)
+1. **Mana Curve Focus** (Iterations 1, 11)
     - Prioritize smooth mana curve
     - Cut redundant CMC slots
     - Favor efficient spells
 
-2. **Synergy Focus** (Iterations 11-20)
+2. **Synergy Focus** (Iterations 2, 12)
     - Maximize deck synergies
     - Cut cards that don't fit main strategy
     - Prioritize combo pieces
 
-3. **Removal/Interaction Focus** (Iterations 21-30)
+3. **Removal/Interaction Focus** (Iterations 3, 13)
     - Preserve interaction and removal
     - Cut win-more cards
     - Prioritize answers over threats
 
-4. **Card Advantage Focus** (Iterations 31-40)
+4. **Card Advantage Focus** (Iterations 4, 14)
     - Keep card draw engines
     - Cut redundant effects
     - Prioritize value generation
 
-5. **Speed/Efficiency Focus** (Iterations 41-50)
+5. **Speed/Efficiency Focus** (Iterations 5, 15)
     - Cut slow cards
     - Keep fast mana
     - Prioritize low CMC spells
 
-6. **Resilience Focus** (Iterations 51-60)
+6. **Resilience Focus** (Iterations 6, 16)
     - Keep protection and recursion
     - Cut fragile strategies
     - Prioritize survival tools
 
-7. **Power Level Focus** (Iterations 61-70)
+7. **Power Level Focus** (Iterations 7, 17)
     - Keep highest power level cards
     - Cut budget/weak cards
     - Prioritize staples
 
-8. **Commander Support Focus** (Iterations 71-80)
+8. **Commander Support Focus** (Iterations 8, 18)
     - Maximize commander synergy
     - Cut cards that don't support commander
     - Prioritize commander protection
 
-9. **Land Optimization Focus** (Iterations 81-90)
+9. **Land Optimization Focus** (Iterations 9, 19)
     - Optimize land count and quality (MAINTAIN 37-38 lands for Commander)
     - Cut ONLY poor utility lands or excessive basics if curve is very low
     - Balance color fixing vs utility
     - **WARNING**: These iterations should rarely cut below 37 lands in Commander
 
-10. **Balanced/Holistic Focus** (Iterations 91-100)
+10. **Balanced/Holistic Focus** (Iterations 10, 20)
     - Consider all factors equally
     - Cut weakest overall cards
     - Maintain deck balance
@@ -401,7 +401,7 @@ Include:
 
 **Summary the findings:**
 
-- "Completed 100 AI-powered deck analyses with different strategic priorities"
+- "Completed 20 AI-powered deck analyses with different strategic priorities"
 - "Found X core cards (90%+ consensus) that should definitely stay"
 - "Identified Y frequent cuts that were removed in most analyses"
 - "Created BEST-consolidated.txt with statistically optimal decklist"
@@ -454,9 +454,9 @@ Include:
 ### Statistical Validity
 
 - More iterations = more reliable results
-- 50 iterations: Quick baseline
-- 100 iterations: Recommended default
-- 200+ iterations: Maximum confidence
+- 10 iterations: Quick baseline
+- 20 iterations: Recommended default (good balance of quality and time)
+- 50+ iterations: Maximum confidence (but significantly longer)
 
 ## Example Interaction
 
@@ -464,35 +464,33 @@ Include:
 
 **You should:**
 
-1. Confirm: "I'll run 100 AI-powered deck analyses with different strategic priorities. Each analysis will intelligently recommend cuts based on a different focus (mana curve, synergy, interaction, etc.). Then I'll aggregate the results to find which cards appear most frequently. This will take a few minutes. Proceed?"
+1. Confirm: "I'll run 20 AI-powered deck analyses with different strategic priorities. Each analysis will intelligently recommend cuts based on a different focus (mana curve, synergy, interaction, etc.). Then I'll aggregate the results to find which cards appear most frequently. This will take a few minutes. Proceed?"
 
 2. Create output folder: `decks/commander/blood-rites/20251127-1430-ai-optimize/`
 
 3. Run iterations:
 
     ```
-    Starting AI optimization with 100 iterations...
+    Starting AI optimization with 20 iterations...
 
-    Iteration 1/100: Mana Curve Focus
+    Iteration 1/20: Mana Curve Focus
     Analyzing deck with emphasis on smooth mana curve...
     ✓ Created iteration-001.txt
 
-    Iteration 2/100: Mana Curve Focus
-    Analyzing deck with emphasis on efficient CMC distribution...
+    Iteration 2/20: Synergy Focus
+    Analyzing deck with emphasis on synergies...
     ✓ Created iteration-002.txt
 
     ...
 
-    Completed 10/100 iterations...
-    Completed 20/100 iterations...
-    ...
-    Completed 100/100 iterations!
+    Completed 10/20 iterations...
+    Completed 20/20 iterations!
     ```
 
 4. Generate analysis:
 
     ```
-    📊 Analyzing results across all 100 iterations...
+    📊 Analyzing results across all 20 iterations...
     ✓ Created BEST-consolidated.txt
     ✓ Created ANALYSIS-REPORT.md
     ```
@@ -507,7 +505,7 @@ Include:
     Found 8 flex slots (30-49%) - adjust based on meta
     Found 4 frequent cuts (<30%) - weakest cards
 
-    The BEST-consolidated.txt represents the statistical consensus of 100 AI analyses.
+    The BEST-consolidated.txt represents the statistical consensus of 20 AI analyses.
     ```
 
 ## Key Differences from Manual Tool
@@ -557,7 +555,7 @@ Use **reduce-deck-size prompt** when:
 
 ## Limitations
 
-- Takes significantly longer than manual tool (5-15 minutes vs 30 seconds)
+- Takes longer than manual tool (10-15 minutes for 20 iterations vs 30 seconds for random tool)
 - Each iteration requires AI inference
 - More expensive in terms of API calls
 - Still may miss meta-specific considerations
