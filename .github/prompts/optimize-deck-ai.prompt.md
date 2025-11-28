@@ -2,18 +2,18 @@
 title: Optimize Deck (AI Multi-Analysis)
 description: Run AI deck analysis 100 times with different priorities to find statistically optimal card selection
 agent: agent
-model: Claude Sonnet 4.5
+model: Claude Sonnet 4
 ---
 
 # Optimize Deck (AI Multi-Analysis)
 
-You are helping the user find the statistically optimal version of their Magic: The Gathering deck by running the deck reduction analysis **20 times** (or a user-specified number) with different strategic priorities, then aggregating the results to find which cards appear most frequently.
+You are helping the user find the statistically optimal version of their Magic: The Gathering deck by running the deck reduction analysis **10 times** (or a user-specified number) with different strategic priorities, then aggregating the results to find which cards appear most frequently.
 
 ## High-Level Process
 
 1. Identify the deck and target size
 2. Create a timestamped output folder for all iterations
-3. Run the reduction analysis N times (default: 20) with varying priorities
+3. Run the reduction analysis N times (default: 10) with varying priorities
 4. Track which cards are kept across all iterations
 5. Generate consolidated "BEST" list based on frequency
 6. Create analysis report with recommendations
@@ -57,6 +57,16 @@ The cache file contains essential card data for every card in the deck:
 - `colors` - Card colors
 - `color_identity` - Commander color identity
 
+**CRITICAL: Use the `type` field to determine card sections:**
+
+- Cards with "Creature" in type go in Creature section (even "Enchantment Creature")
+- Cards with "Instant" in type go in Instant section
+- Cards with "Sorcery" in type go in Sorcery section
+- Cards with "Enchantment" ONLY (no "Creature") go in Enchantment section
+- Cards with "Artifact" ONLY (no "Creature") go in Artifact section
+- Cards with "Planeswalker" in type go in Planeswalker section
+- Cards with "Land" in type go in Land section
+
 **Why this is critical:**
 
 - You MUST reference actual oracle text when making decisions
@@ -70,7 +80,7 @@ The cache file contains essential card data for every card in the deck:
 **Determine parameters:**
 
 - **Target size**: Default 100 for Commander (**IMPORTANT: This means 100 TOTAL cards including the commander, which equals 1 commander + 99 mainboard cards**)
-- **Number of iterations**: Default 20, user can request 50, 100, etc.
+- **Number of iterations**: Default 10, user can request 20, 50, etc.
 - **Output folder**: Create `decks/<format>/<deck-name>/YYYYMMDD-HHMM-ai-optimize/`
 
 **🚨 CRITICAL CARD COUNTING RULE 🚨**
@@ -105,55 +115,52 @@ For each iteration (1 through N):
 
 **A. Vary the cutting priority/perspective:**
 
-Each iteration should use a **different strategic lens** for analysis. Rotate through these approaches (cycling back to the start after completing all 10 focuses):
+Each iteration should use a **different strategic lens** for analysis. Use these 10 approaches in order:
 
-1. **Mana Curve Focus** (Iterations 1, 11)
+1. **Mana Curve Focus** (Iteration 1)
     - Prioritize smooth mana curve
     - Cut redundant CMC slots
     - Favor efficient spells
 
-2. **Synergy Focus** (Iterations 2, 12)
+2. **Synergy Focus** (Iteration 2)
     - Maximize deck synergies
     - Cut cards that don't fit main strategy
     - Prioritize combo pieces
 
-3. **Removal/Interaction Focus** (Iterations 3, 13)
+3. **Removal/Interaction Focus** (Iteration 3)
     - Preserve interaction and removal
     - Cut win-more cards
     - Prioritize answers over threats
 
-4. **Card Advantage Focus** (Iterations 4, 14)
+4. **Card Advantage Focus** (Iteration 4)
     - Keep card draw engines
     - Cut redundant effects
     - Prioritize value generation
 
-5. **Speed/Efficiency Focus** (Iterations 5, 15)
+5. **Speed/Efficiency Focus** (Iteration 5)
     - Cut slow cards
     - Keep fast mana
     - Prioritize low CMC spells
 
-6. **Resilience Focus** (Iterations 6, 16)
+6. **Resilience Focus** (Iteration 6)
     - Keep protection and recursion
     - Cut fragile strategies
     - Prioritize survival tools
 
-7. **Power Level Focus** (Iterations 7, 17)
-    - Keep highest power level cards
-    - Cut budget/weak cards
-    - Prioritize staples
+**7. Power Level Focus** (Iteration 7) - Keep highest power level cards - Cut weak/suboptimal cards - Prioritize staples
 
-8. **Commander Support Focus** (Iterations 8, 18)
+8. **Commander Support Focus** (Iteration 8)
     - Maximize commander synergy
     - Cut cards that don't support commander
     - Prioritize commander protection
 
-9. **Land Optimization Focus** (Iterations 9, 19)
+9. **Land Optimization Focus** (Iteration 9)
     - Optimize land count and quality (MAINTAIN 37-38 lands for Commander)
     - Cut ONLY poor utility lands or excessive basics if curve is very low
     - Balance color fixing vs utility
     - **WARNING**: These iterations should rarely cut below 37 lands in Commander
 
-10. **Balanced/Holistic Focus** (Iterations 10, 20)
+10. **Balanced/Holistic Focus** (Iteration 10)
     - Consider all factors equally
     - Cut weakest overall cards
     - Maintain deck balance
@@ -193,6 +200,18 @@ Use the **same analytical process as reduce-deck-size**:
 **C. Create iteration file:**
 
 Save to: `decks/<format>/<deck-name>/YYYYMMDD-HHMM-ai-optimize/iteration-XXX.txt`
+
+**🚨 CRITICAL: Correct Card Categorization 🚨**
+
+Before organizing cards into sections, check each card's `type` field in the cache:
+
+- "Enchantment Creature" → Creature section
+- "Artifact Creature" → Creature section
+- "Legendary Creature" → Creature section
+- "Enchantment" (no "Creature") → Enchantment section
+- "Artifact" (no "Creature") → Artifact section
+
+DO NOT categorize by partial type names or assumptions!
 
 **IMPORTANT: After creating each file, you MUST validate it immediately using:**
 
@@ -401,7 +420,7 @@ Include:
 
 **Summary the findings:**
 
-- "Completed 20 AI-powered deck analyses with different strategic priorities"
+- "Completed 10 AI-powered deck analyses with different strategic priorities"
 - "Found X core cards (90%+ consensus) that should definitely stay"
 - "Identified Y frequent cuts that were removed in most analyses"
 - "Created BEST-consolidated.txt with statistically optimal decklist"
@@ -433,6 +452,27 @@ Include:
 - Count your lands in every iteration to verify you haven't gone below minimum
 - If you find yourself cutting lands to hit target size, **cut more spells instead**
 
+### Deck Composition Guidelines
+
+Use these target numbers when building balanced Commander decks:
+
+| Category                         | Typical Range | Target Number | Purpose                                                                                                   |
+| -------------------------------- | ------------- | ------------- | --------------------------------------------------------------------------------------------------------- |
+| **Lands**                        | 35-40         | 37            | Your basic source of mana.                                                                                |
+| **Ramp/Mana Acceleration**       | 8-12          | 10            | Cards that get you extra mana (like Sol Ring, Arcane Signet, or Cultivate).                               |
+| **Card Draw/Advantage**          | 8-12          | 10            | Cards that refill your hand (like Harmonize or Rhystic Study).                                            |
+| **Targeted Removal/Interaction** | 5-10          | 8             | Getting rid of single threats (like Swords to Plowshares or a counterspell).                              |
+| **Board Wipes/Mass Removal**     | 2-4           | 3             | Resetting the entire battlefield (like Wrath of God or Blasphemous Act).                                  |
+| **Deck Theme/Creatures/Synergy** | 25-35+        | ~30-32        | The cards that execute your main strategy (e.g., your Vampires, your artifacts, or your high-cost bombs). |
+
+**How to Use These Guidelines:**
+
+- Start by ensuring you have the target amounts of essential categories (lands, ramp, draw, removal)
+- Fill remaining slots with theme/synergy cards that support your commander's strategy
+- When cutting cards, preserve the balance - don't eliminate entire categories
+- If you're short on removal or ramp, prioritize adding those over more theme cards
+- Theme cards should be the largest category, but infrastructure is equally important
+
 ### Quality Over Speed
 
 - Each iteration should use **real AI analysis**, not random selection
@@ -454,8 +494,8 @@ Include:
 ### Statistical Validity
 
 - More iterations = more reliable results
-- 10 iterations: Quick baseline
-- 20 iterations: Recommended default (good balance of quality and time)
+- 10 iterations: Recommended default (good balance of quality and time)
+- 20 iterations: Higher confidence (more thorough analysis)
 - 50+ iterations: Maximum confidence (but significantly longer)
 
 ## Example Interaction
@@ -464,27 +504,26 @@ Include:
 
 **You should:**
 
-1. Confirm: "I'll run 20 AI-powered deck analyses with different strategic priorities. Each analysis will intelligently recommend cuts based on a different focus (mana curve, synergy, interaction, etc.). Then I'll aggregate the results to find which cards appear most frequently. This will take a few minutes. Proceed?"
+1. Confirm: "I'll run 10 AI-powered deck analyses with different strategic priorities. Each analysis will intelligently recommend cuts based on a different focus (mana curve, synergy, interaction, etc.). Then I'll aggregate the results to find which cards appear most frequently. This will take a few minutes. Proceed?"
 
 2. Create output folder: `decks/commander/blood-rites/20251127-1430-ai-optimize/`
 
 3. Run iterations:
 
     ```
-    Starting AI optimization with 20 iterations...
+    Starting AI optimization with 10 iterations...
 
-    Iteration 1/20: Mana Curve Focus
+    Iteration 1/10: Mana Curve Focus
     Analyzing deck with emphasis on smooth mana curve...
     ✓ Created iteration-001.txt
 
-    Iteration 2/20: Synergy Focus
+    Iteration 2/10: Synergy Focus
     Analyzing deck with emphasis on synergies...
     ✓ Created iteration-002.txt
 
     ...
 
-    Completed 10/20 iterations...
-    Completed 20/20 iterations!
+    Completed 10/10 iterations!
     ```
 
 4. Generate analysis:
@@ -505,7 +544,7 @@ Include:
     Found 8 flex slots (30-49%) - adjust based on meta
     Found 4 frequent cuts (<30%) - weakest cards
 
-    The BEST-consolidated.txt represents the statistical consensus of 20 AI analyses.
+    The BEST-consolidated.txt represents the statistical consensus of 10 AI analyses.
     ```
 
 ## Key Differences from Manual Tool
@@ -555,7 +594,7 @@ Use **reduce-deck-size prompt** when:
 
 ## Limitations
 
-- Takes longer than manual tool (10-15 minutes for 20 iterations vs 30 seconds for random tool)
+- Takes longer than manual tool (5-10 minutes for 10 iterations vs 30 seconds for random tool)
 - Each iteration requires AI inference
 - More expensive in terms of API calls
 - Still may miss meta-specific considerations
@@ -591,3 +630,9 @@ Use **reduce-deck-size prompt** when:
 7. **Cutting all "bad" cards at once** - Some flex slots need to stay, don't only keep perfect cards
 
 8. **Skipping validation** - Never skip validation! Every iteration must be validated before moving to the next
+
+9. **Incorrect card categorization** - CRITICAL ERROR! Always check the cache `type` field:
+    - "Enchantment Creature" goes in Creature section, NOT Enchantment section
+    - "Artifact Creature" goes in Creature section, NOT Artifact section
+    - Only pure "Enchantment" or "Artifact" (without "Creature") go in those sections
+    - When in doubt, reference the exact `type` field from the cache file
