@@ -40,7 +40,7 @@ You are helping the user find the statistically optimal version of their Magic: 
 
 **Determine parameters:**
 
-- **Target size**: Default 99 for Commander, ask for other formats
+- **Target size**: Default 100 for Commander (99 mainboard + 1 commander), ask for other formats
 - **Number of iterations**: Default 100, user can request 50, 200, etc.
 - **Output folder**: Create `decks/<format>/<deck-name>/YYYYMMDD-HHMM-ai-optimize/`
 
@@ -134,7 +134,7 @@ Format:
 # Iteration XXX - <Focus Name>
 # Generated: <timestamp>
 # Priority: <description of what this iteration optimized for>
-# Target size: 99
+# Target size: 100
 
 ## Creature (X)
 1 Card Name
@@ -146,7 +146,7 @@ Format:
 [All card types organized by category]
 
 ## Stats
-Total Cards: 99
+Total Cards: 100
 Unique Cards: X
 
 ## Cards Cut This Iteration (X)
@@ -207,7 +207,7 @@ Format:
 ...
 
 ## Stats
-Total Cards: 99
+Total Cards: 100
 Unique Cards: X
 ```
 
