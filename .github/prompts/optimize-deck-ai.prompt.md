@@ -20,6 +20,15 @@ You are helping the user find the statistically optimal version of their Magic: 
 
 ## Detailed Steps
 
+**⚠️ CRITICAL: WORK SILENTLY THROUGH ITERATIONS**
+
+- **DO NOT** provide summaries or explanations for each iteration in chat
+- **DO NOT** describe what you're cutting or why during iterations
+- **ONLY** show brief progress updates like "Completed 10/100 iterations..."
+- **SAVE** all analysis and reasoning to the iteration files themselves
+- **PROVIDE** a comprehensive summary ONLY at the end after all iterations complete
+- The user wants speed and efficiency - verbose iteration commentary slows down the process significantly
+
 ### 1. Setup Phase
 
 **Identify the deck:**
@@ -150,6 +159,11 @@ Unique Cards: X
 
 - Show progress every 10 iterations: "Completed 10/100 iterations..."
 - Include iteration focus: "Iteration 23: Removal/Interaction Focus"
+- **DO NOT provide summaries or explanations for each iteration in chat**
+- **DO NOT explain your reasoning for each iteration in the chat**
+- **Work silently through all iterations** - only show brief progress updates
+- Save all reasoning and explanations to the iteration files themselves
+- The user wants speed, not detailed iteration-by-iteration commentary
 
 ### 3. Analysis Phase
 
