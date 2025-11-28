@@ -335,7 +335,7 @@ describe("MoxfieldClient", () => {
 
             expect(mockCache.updateCache).toHaveBeenCalledWith(
                 "abc123",
-                "decks/commander/test-deck/moxfield.txt"
+                "decks/commander/test-deck/moxfield.md"
             );
         });
 

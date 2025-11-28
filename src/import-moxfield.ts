@@ -31,7 +31,7 @@ async function main() {
         console.log(`✅ Deck imported successfully!`);
         console.log(`📁 Saved to: ${deckFolder}/\n`);
         console.log("To analyze this deck, run:");
-        console.log(`  npm run dev ${deckFolder}/moxfield.txt\n`);
+        console.log(`  npm run dev ${deckFolder}/moxfield.md\n`);
     } catch (error: any) {
         console.error("❌ Error:", error.message);
         process.exit(1);

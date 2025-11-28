@@ -11,7 +11,7 @@ async function main() {
 
     if (args.length === 0) {
         console.log("Usage: npm start <decklist-file>");
-        console.log("Example: npm start example-deck.txt");
+        console.log("Example: npm start example-deck.md");
         process.exit(1);
     }
 

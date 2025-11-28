@@ -241,14 +241,14 @@ if (require.main === module) {
         console.error("");
         console.error("Examples:");
         console.error('  npm run count "4 Lightning Bolt" "20 Mountain"');
-        console.error("  npx ts-node src/card-counter.ts decks/my-deck.txt");
+        console.error("  npx ts-node src/card-counter.ts decks/my-deck.md");
         process.exit(1);
     }
 
     // Check if first arg is a file path
     const firstArg = args[0];
     const isFilePath =
-        firstArg.includes("/") || firstArg.includes("\\") || firstArg.endsWith(".txt");
+        firstArg.includes("/") || firstArg.includes("\\") || firstArg.endsWith(".md");
 
     if (isFilePath && fs.existsSync(firstArg)) {
         // File-based counting

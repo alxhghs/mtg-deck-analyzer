@@ -42,11 +42,28 @@ export class MoxfieldClient {
      */
     async getDeck(deckId: string): Promise<MoxfieldDeck> {
         try {
-            const response = await axios.get(`${MOXFIELD_API_BASE}/${deckId}`);
+            const response = await axios.get(`${MOXFIELD_API_BASE}/${deckId}`, {
+                headers: {
+                    "User-Agent":
+                        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+                    Accept: "application/json, text/plain, */*",
+                    "Accept-Language": "en-US,en;q=0.9",
+                    "Accept-Encoding": "gzip, deflate, br",
+                    Connection: "keep-alive",
+                    "Sec-Fetch-Dest": "empty",
+                    "Sec-Fetch-Mode": "cors",
+                    "Sec-Fetch-Site": "same-site",
+                },
+                timeout: 10000,
+            });
             return response.data;
         } catch (error: any) {
             if (error.response?.status === 404) {
                 throw new Error(`Deck not found: ${deckId}. Make sure the deck is public.`);
+            } else if (error.response?.status === 403) {
+                throw new Error(
+                    `Access forbidden: ${deckId}. Moxfield API may be temporarily blocked by Cloudflare or require authentication. Try again later.`
+                );
             }
             throw new Error(`Failed to fetch deck from Moxfield: ${error.message}`);
         }
@@ -70,7 +87,7 @@ export class MoxfieldClient {
             ? this.sanitizeFileName(deckName)
             : this.sanitizeFileName(deck.name);
         const deckFolder = path.join("decks", formatDir, folderName);
-        const filePath = path.join(deckFolder, "moxfield.txt");
+        const filePath = path.join(deckFolder, "moxfield.md");
 
         // Check if we need to fetch from API
         if (!forceRefresh && !this.cache.shouldFetch(deckId, filePath)) {
@@ -145,7 +162,7 @@ export class MoxfieldClient {
             fs.mkdirSync(deckFolder, { recursive: true });
         }
 
-        // Save moxfield.txt
+        // Save moxfield.md
         fs.writeFileSync(filePath, content);
 
         // Update cache

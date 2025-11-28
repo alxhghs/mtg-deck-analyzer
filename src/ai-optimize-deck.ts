@@ -125,7 +125,7 @@ function validateAllIterations(
 
     const files = fs
         .readdirSync(folderPath)
-        .filter((f) => f.startsWith("iteration-") && f.endsWith(".txt"))
+        .filter((f) => f.startsWith("iteration-") && f.endsWith(".md"))
         .sort();
 
     if (files.length === 0) {

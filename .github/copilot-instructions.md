@@ -128,10 +128,27 @@ When the user asks about a deck by name (e.g., "help me get the blood-rites deck
     - The cache file contains minimal but complete card data: mana cost, type, oracle text, colors
 
 3. **If deck doesn't exist or user wants to update from Moxfield:**
-    - Ask user for Moxfield URL if not clear from context
+    - Use the specific URLs for known decks (see Known Deck URLs section below)
     - Run `npm run import <moxfield-url> <deck-name>` (optional deck name, will use Moxfield name if omitted)
     - Then run analysis: `npm run dev decks/<format>/<deck-name>/moxfield.txt`
     - **Read `decks/<format>/<deck-name>/moxfield-cache.json`** for card details
+
+## Known Deck URLs
+
+For updating specific decks from Moxfield, use these URLs:
+
+- **blood-rites**: https://www.moxfield.com/decks/DebJHvH3Uku9JZqBOpBvOg
+- **tricky-terrain**: https://www.moxfield.com/decks/gmj06aiKMEaNLgGOD1ooUg
+
+**Examples:**
+
+```bash
+# Update blood-rites deck
+npm run import https://www.moxfield.com/decks/DebJHvH3Uku9JZqBOpBvOg blood-rites --force
+
+# Update tricky-terrain deck
+npm run import https://www.moxfield.com/decks/gmj06aiKMEaNLgGOD1ooUg tricky-terrain --force
+```
 
 4. **Use the per-deck cached card data for recommendations:**
     - **ALWAYS read the deck's own cache file:** `decks/<format>/<deck-name>/<deckfile>-cache.json`
