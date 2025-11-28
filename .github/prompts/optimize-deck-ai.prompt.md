@@ -34,6 +34,25 @@ You are helping the user find the statistically optimal version of their Magic: 
 
 ### 1. Setup Phase
 
+**Load Mana Curve Guidelines:**
+
+Before any deck analysis, you MUST read the comprehensive mana guidelines from `docs/MANA.md`. This document provides research-backed optimal mana curves based on:
+
+- **Commander CMC**: Different curves for 2-6 CMC commanders
+- **Game Length**: Different curves for fast games (turn 5), normal games (turn 7), and long games (turn 9+)
+- **Ramp Package**: Guidelines for 1-mana dorks vs 2-mana rocks vs 3-mana rocks
+- **Multiplayer Strategy**: High-variance vs consistency optimization
+
+**Key insights from the research:**
+
+- **Normal Games (Turn 7)**: Focus on 2-4 CMC spells, maintain 37-39 lands
+- **Fast Games (Turn 5)**: More 1-2 drops, fewer 5+ CMC spells, can shave to 35-38 lands
+- **Long Games (Turn 9+)**: Ramp heavy (13-14 signets), focus on 4+ CMC haymakers, 38-39 lands
+- **3-mana rocks are too slow** - prefer 2-mana rocks or 1-mana dorks
+- **Land counts matter** - don't skimp on lands even with ramp
+
+**Apply these guidelines when making mana curve decisions in your iterations.**
+
 **Identify the deck:**
 
 - Ask which deck to optimize if not clear from context
@@ -121,9 +140,11 @@ For each iteration (1 through N):
 Each iteration should use a **different strategic lens** for analysis. Use these 10 approaches in order:
 
 1. **Mana Curve Focus** (Iteration 1)
-    - Prioritize smooth mana curve
-    - Cut redundant CMC slots
-    - Favor efficient spells
+    - Apply MANA.md guidelines for commander's CMC
+    - Prioritize smooth mana curve based on game length expectations
+    - Cut redundant CMC slots that don't fit research-backed curves
+    - Favor efficient spells at the optimal CMC ranges
+    - Ensure land count matches research recommendations
 
 2. **Synergy Focus** (Iteration 2)
     - Maximize deck synergies
@@ -158,10 +179,13 @@ Each iteration should use a **different strategic lens** for analysis. Use these
     - Prioritize commander protection
 
 9. **Land Optimization Focus** (Iteration 9)
-    - Optimize land count and quality (MAINTAIN 37-38 lands for Commander)
-    - Cut ONLY poor utility lands or excessive basics if curve is very low
-    - Balance color fixing vs utility
-    - **WARNING**: These iterations should rarely cut below 37 lands in Commander
+    - Apply MANA.md research on optimal land counts for commander CMC
+    - Optimize land count and quality (MAINTAIN research-recommended minimums)
+    - For 2-3 CMC commanders: Consider 40-42 lands (research-backed)
+    - For 4+ CMC commanders: Maintain 37-39 lands with appropriate ramp
+    - Balance color fixing vs utility lands
+    - **WARNING**: Never go below research minimums - these iterations should focus on land QUALITY, not quantity cuts
+    - Only cut clearly underperforming utility lands, never core manabase
 
 10. **Balanced/Holistic Focus** (Iteration 10)
     - Consider all factors equally
@@ -190,15 +214,33 @@ Use the **same analytical process as reduce-deck-size**:
 
 **CRITICAL: Maintain Proper Land Counts**
 
-- **Commander decks need 37-38 lands minimum** (never go below 37)
+- **Commander decks need 37-38 lands minimum** (per MANA.md research - never go below 37)
+- **Fast games can use 35-38 lands** if average CMC < 2.5 and heavy on 1-2 drops
+- **Long games need 38-39 lands** with heavy ramp package (13-14 signets)
 - **Standard/Modern decks need 23-26 lands minimum** (never go below 22)
 - **Land cuts should be RARE and only when:**
-    - Deck has exceptionally low mana curve (avg CMC < 2.5)
+    - Deck has exceptionally low mana curve (avg CMC < 2.5) AND fast game plan
     - Deck has 15+ mana rocks/dorks providing alternative sources
     - You're cutting utility lands that underperform, not core manabase
-- **When in doubt, keep lands over spells**
+- **When in doubt, keep lands over spells** - the research shows land counts matter more than most players realize
 - **Count lands carefully** - don't accidentally cut more lands than intended
 - **Prioritize cutting spells** when reducing deck size, not lands
+
+**Mana Curve Guidelines from MANA.md:**
+
+For **Normal Commander Games** (7 turns), optimal curves by commander CMC:
+
+- **2 CMC Commander**: 9 one-drops, 20 three-drops, 14 four-drops, 9 five-drops, 4 six-drops, 42 lands + Sol Ring
+- **3 CMC Commander**: 8 one-drops, 19 two-drops, 16 four-drops, 10 five-drops, 3 six-drops, 42 lands + Sol Ring
+- **4 CMC Commander**: 6 one-drops, 12 two-drops, 13 three-drops, 13 five-drops, 8 six-drops, 39 lands + Sol Ring + 7 signets
+- **5-6 CMC Commanders**: Focus on 3-5 drops with heavier ramp package (8-9 signets), 38-39 lands
+
+**Ramp Package Guidelines:**
+
+- **2-mana rocks** (Arcane Signet, Talismans) are optimal efficiency
+- **3-mana rocks** (Commander's Sphere) are generally too slow unless fixing is critical
+- **1-mana dorks** (in green) are excellent - can support 18-20 dorks with 33-35 lands
+- **Sol Ring** is always included when legal
 
 **C. Create iteration file:**
 
