@@ -76,7 +76,21 @@ describe("MoxfieldClient", () => {
             const result = await client.getDeck("abc123");
 
             expect(mockedAxios.get).toHaveBeenCalledWith(
-                "https://api2.moxfield.com/v3/decks/all/abc123"
+                "https://api2.moxfield.com/v3/decks/all/abc123",
+                {
+                    headers: {
+                        "User-Agent":
+                            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+                        Accept: "application/json, text/plain, */*",
+                        "Accept-Language": "en-US,en;q=0.9",
+                        "Accept-Encoding": "gzip, deflate, br",
+                        Connection: "keep-alive",
+                        "Sec-Fetch-Dest": "empty",
+                        "Sec-Fetch-Mode": "cors",
+                        "Sec-Fetch-Site": "same-site",
+                    },
+                    timeout: 10000,
+                }
             );
             expect(result).toEqual(mockDeckResponse);
         });

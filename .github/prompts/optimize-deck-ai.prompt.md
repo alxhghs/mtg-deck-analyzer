@@ -9,14 +9,17 @@ model: Claude Sonnet 4
 
 You are helping the user find the statistically optimal version of their Magic: The Gathering deck by running the deck reduction analysis **10 times** (or a user-specified number) with different strategic priorities, then aggregating the results to find which cards appear most frequently.
 
+**IMPORTANT: Before starting any analysis, you must read and understand the mana curve guidelines from `docs/MANA.md`. These provide research-backed optimal mana curves for different Commander costs and game lengths that should inform your land counts and curve optimization decisions.**
+
 ## High-Level Process
 
-1. Identify the deck and target size
-2. Create a timestamped output folder for all iterations
-3. Run the reduction analysis N times (default: 10) with varying priorities
-4. Track which cards are kept across all iterations
-5. Generate consolidated "BEST" list based on frequency
-6. Create analysis report with recommendations
+1. **Load Mana Guidelines**: Read `docs/MANA.md` to understand optimal mana curves
+2. Identify the deck and target size
+3. Create a timestamped output folder for all iterations
+4. Run the reduction analysis N times (default: 10) with varying priorities
+5. Track which cards are kept across all iterations
+6. Generate consolidated "BEST" list based on frequency
+7. Create analysis report with recommendations
 
 ## Detailed Steps
 
