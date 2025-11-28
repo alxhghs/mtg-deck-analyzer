@@ -38,13 +38,68 @@ You are helping the user find the statistically optimal version of their Magic: 
 - Verify cache exists: `decks/<format>/<deck-name>/moxfield-cache.json`
 - Count current cards and determine how many to cut
 
+**🚨 MANDATORY: Load card data into context 🚨**
+
+Before starting any iterations, you MUST read the entire cache file into your context:
+
+```bash
+# Read the full cache file - typically 1500-2000 lines, fits in context window
+read_file decks/<format>/<deck-name>/moxfield-cache.json (lines 1 to end)
+```
+
+The cache file contains essential card data for every card in the deck:
+
+- `name` - Card name
+- `mana_cost` - Mana cost like {2}{W}{B}
+- `cmc` - Converted mana cost (number)
+- `type_line` - Card type (e.g., "Creature — Vampire Knight")
+- `oracle_text` - Complete rules text
+- `colors` - Card colors
+- `color_identity` - Commander color identity
+
+**Why this is critical:**
+
+- You MUST reference actual oracle text when making decisions
+- Never guess or hallucinate what a card does
+- Card synergies and interactions depend on exact rules text
+- Token generation, drain effects, +1/+1 counters - all need accurate text
+- Cache files are small (~30-60KB, 1500-2000 lines) and easily fit in context
+
+**DO NOT proceed to iterations without loading the cache file first!**
+
 **Determine parameters:**
 
-- **Target size**: Default 100 for Commander (99 mainboard + 1 commander), ask for other formats
+- **Target size**: Default 100 for Commander (**IMPORTANT: This means 100 TOTAL cards including the commander, which equals 1 commander + 99 mainboard cards**)
 - **Number of iterations**: Default 100, user can request 50, 200, etc.
 - **Output folder**: Create `decks/<format>/<deck-name>/YYYYMMDD-HHMM-ai-optimize/`
 
+**🚨 CRITICAL CARD COUNTING RULE 🚨**
+
+Commander format requires **EXACTLY 100 TOTAL CARDS**:
+
+- 1 Commander (in Commander section)
+- 99 Mainboard cards (all other sections combined)
+- **Total = 100 cards** (NOT 101, NOT 99, EXACTLY 100)
+
+When building your decklist:
+
+1. Count all cards in ALL sections (Creature, Instant, Sorcery, Enchantment, Artifact, Planeswalker, Land)
+2. Add 1 for the Commander
+3. The sum MUST equal 100
+4. Common mistake: Creating 99 mainboard + 1 commander + accidentally adding an extra card = 101 total
+5. **Use the validation tool to verify your counts before proceeding**
+
 ### 2. Iteration Phase (Repeat N Times)
+
+**🚨 CRITICAL VALIDATION REQUIREMENT 🚨**
+
+After creating EVERY SINGLE iteration file, you MUST:
+
+1. Run the validation command: `npx ts-node src/ai-optimize-deck.ts validate <file>`
+2. Wait for validation to pass before proceeding
+3. If validation fails, fix the file immediately and re-validate
+4. DO NOT create multiple iterations without validating each one
+5. DO NOT skip validation even once - it invalidates the entire analysis
 
 For each iteration (1 through N):
 
@@ -107,10 +162,21 @@ Each iteration should use a **different strategic lens** for analysis. Rotate th
 
 Use the **same analytical process as reduce-deck-size**:
 
-1. Read the deck's cache file for card details
+1. **Reference the loaded cache file** for card details - DO NOT guess what cards do
+    - Check oracle_text for exact card abilities
+    - Verify mana costs and CMC values
+    - Confirm card types and subtypes
+    - Look for synergy keywords (lifelink, drain, sacrifice, tokens, etc.)
 2. Consider the current iteration's focus/priority
 3. Identify exactly N cards to cut (where N = current size - target size)
-4. Provide brief reasoning based on current focus
+4. Provide brief reasoning based on current focus **and actual card text from cache**
+
+**When making decisions:**
+
+- ✅ Reference cache: "Cutting Epicure of Blood (oracle: 'Whenever you gain life, each opponent loses 1 life') - weakest drain effect"
+- ❌ Don't guess: "Cutting Epicure of Blood - probably does something with vampires"
+- ✅ Compare abilities: Check oracle_text to see which drain effect is stronger
+- ❌ Don't assume: Don't assume similar cards have identical effects
 
 **CRITICAL: Maintain Proper Land Counts**
 
@@ -127,6 +193,19 @@ Use the **same analytical process as reduce-deck-size**:
 **C. Create iteration file:**
 
 Save to: `decks/<format>/<deck-name>/YYYYMMDD-HHMM-ai-optimize/iteration-XXX.txt`
+
+**IMPORTANT: After creating each file, you MUST validate it immediately using:**
+
+```bash
+npx ts-node src/ai-optimize-deck.ts validate decks/<format>/<deck-name>/YYYYMMDD-HHMM-ai-optimize/iteration-XXX.txt
+```
+
+If validation fails:
+
+- **STOP immediately**
+- **Fix the file** to have exactly 100 cards and 37 lands minimum
+- **Re-validate** before continuing
+- **DO NOT proceed** to the next iteration until current one passes validation
 
 Format:
 
@@ -146,8 +225,17 @@ Format:
 [All card types organized by category]
 
 ## Stats
-Total Cards: 100
+Total Cards: 100 (1 Commander + 99 Mainboard)
 Unique Cards: X
+
+Card Types:
+Creature: X (X%)
+Instant: X (X%)
+Sorcery: X (X%)
+Enchantment: X (X%)
+Artifact: X (X%)
+Planeswalker: X (X%)
+Land: X (X%)
 
 ## Cards Cut This Iteration (X)
 - Card Name 1 - Reason
@@ -157,20 +245,41 @@ Unique Cards: X
 
 **D. MANDATORY VALIDATION after creating each iteration file:**
 
-After creating each iteration file, you MUST validate it immediately:
+**⚠️ CRITICAL: THIS STEP CANNOT BE SKIPPED ⚠️**
+
+After creating each iteration file, you MUST validate it immediately using the validation tool:
 
 ```bash
 npx ts-node src/ai-optimize-deck.ts validate decks/<format>/<deck-name>/YYYYMMDD-HHMM-ai-optimize/iteration-XXX.txt
 ```
 
-If validation fails:
+The validation tool will check:
 
-- **STOP immediately**
-- **Fix the iteration file** to have exactly 100 cards and 35-38 lands
-- **Re-validate** before continuing
-- **DO NOT proceed to the next iteration** until current one passes validation
+- Total card count is exactly 100 (for Commander) - **This is 1 Commander + 99 Mainboard = 100 TOTAL**
+- Land count is at least 37 (for Commander)
+- File has proper structure (Commander section, Stats section, etc.)
 
-This validation step is **NON-NEGOTIABLE** and prevents accumulating errors across iterations.
+**Common validation failures and how to fix them:**
+
+1. **"Card count is 101, expected 100 (off by 1)"**
+    - You included 1 commander + 100 mainboard cards (wrong!)
+    - Fix: Remove 1 card from any mainboard section (Creature, Instant, Sorcery, etc.)
+    - The correct formula is: 1 Commander + 99 Mainboard = 100 TOTAL
+
+2. **"Land count is 36, minimum is 37"**
+    - You need to add 1 more land OR remove 1 spell to make room for another land
+    - Commander decks need 37-38 lands minimum
+
+3. **Any validation failure:**
+    - **STOP immediately** - Do not create the next iteration
+    - **Fix the iteration file** to have exactly 100 cards and 37-38 lands
+    - **Re-validate** using the same command until it passes
+    - **DO NOT proceed to the next iteration** until current one passes validation
+    - **DO NOT guess** at card counts - use the validation tool to verify
+
+This validation step is **NON-NEGOTIABLE** and prevents accumulating errors across iterations. Without proper validation, the entire analysis becomes unreliable.
+
+**Remember: 100 total cards = 1 Commander + 99 Mainboard, NOT 1 Commander + 100 Mainboard!**
 
 **E. Progress tracking:**
 
@@ -443,6 +552,8 @@ Use **reduce-deck-size prompt** when:
 - Output is similar to manual tool but with AI reasoning
 - Significantly slower but more insightful
 - Best for important decisions where you want maximum confidence
+- **Requires loading full cache file** (~1500-2000 lines) into context at the start
+- All decisions must be based on actual oracle text from cache, not assumptions
 
 ## Limitations
 
@@ -454,8 +565,31 @@ Use **reduce-deck-size prompt** when:
 
 ## Common Mistakes to Avoid
 
-1. **Cutting too many lands** - Most common error! Always verify land count stays at 37-38 for Commander
-2. **Over-optimizing mana curve** - Don't sacrifice powerful high-CMC cards just for curve smoothness
-3. **Ignoring commander synergy** - Cards that enable your commander are more valuable than raw power
-4. **Cutting all "bad" cards at once** - Some flex slots need to stay, don't only keep perfect cards
-5. **Not reading oracle text** - Make decisions based on actual card text from cache, not assumptions
+1. **Creating 101-card decks** - THE MOST COMMON ERROR! Commander is 100 TOTAL cards (1 commander + 99 mainboard), NOT 101!
+    - If validation says "101 cards", you have too many mainboard cards
+    - Fix: Remove 1 card from Creatures, Instants, Sorceries, etc.
+    - Always count: Does Commander (1) + all other sections = 100?
+
+2. **Not loading the cache file** - CRITICAL ERROR! You must read the entire cache file before starting iterations
+    - The cache contains oracle text, mana costs, card types for every card
+    - Without it, you'll hallucinate card abilities and make bad cuts
+    - Cache files are ~1500-2000 lines and fit easily in context
+    - DO NOT proceed without loading cache first!
+
+3. **Hallucinating card abilities** - Never guess what a card does!
+    - Always reference the cache file's oracle_text field
+    - Similar card names don't mean similar effects
+    - Token generation, drain triggers, +1/+1 counters - check exact wording
+    - When comparing cards, look at their actual oracle text side by side
+
+4. **Cutting too many lands** - Second most common error! Always verify land count stays at 37-38 for Commander
+    - If validation says "36 lands", you need to add 1 more land
+    - Fix: Convert a basic or add a utility land
+
+5. **Over-optimizing mana curve** - Don't sacrifice powerful high-CMC cards just for curve smoothness
+
+6. **Ignoring commander synergy** - Cards that enable your commander are more valuable than raw power
+
+7. **Cutting all "bad" cards at once** - Some flex slots need to stay, don't only keep perfect cards
+
+8. **Skipping validation** - Never skip validation! Every iteration must be validated before moving to the next
