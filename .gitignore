@@ -4,5 +4,6 @@ dist/
 .DS_Store
 cache/
 decks/
+coverage/
 # Per-deck cache files
 *-cache.json
