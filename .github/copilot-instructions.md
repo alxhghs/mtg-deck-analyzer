@@ -314,6 +314,7 @@ Include card counts per category to help track deck balance.
   - Commander role and how the deck supports it
   - Overall game plan (aggro/midrange/control/combo)
   - Notable strengths or unique aspects
+- **Reference MANA.md guidelines** for optimal land counts and mana curve decisions
 - Add a bracket estimate at the end of description:
   - **Bracket 1**: Precon level, few upgrades, no tutors/fast mana, casual cards
   - **Bracket 2**: Upgraded precon, some tutors, Sol Ring, synergistic but fair

@@ -212,19 +212,12 @@ Use the **same analytical process as reduce-deck-size**:
 - ✅ Compare abilities: Check oracle_text to see which drain effect is stronger
 - ❌ Don't assume: Don't assume similar cards have identical effects
 
-**CRITICAL: Maintain Proper Land Counts**
+**CRITICAL: Follow MANA.md Guidelines**
 
-- **Commander decks need 37-38 lands minimum** (per MANA.md research - never go below 37)
-- **Fast games can use 35-38 lands** if average CMC < 2.5 and heavy on 1-2 drops
-- **Long games need 38-39 lands** with heavy ramp package (13-14 signets)
-- **Standard/Modern decks need 23-26 lands minimum** (never go below 22)
-- **Land cuts should be RARE and only when:**
-    - Deck has exceptionally low mana curve (avg CMC < 2.5) AND fast game plan
-    - Deck has 15+ mana rocks/dorks providing alternative sources
-    - You're cutting utility lands that underperform, not core manabase
-- **When in doubt, keep lands over spells** - the research shows land counts matter more than most players realize
+- **Apply research-backed land counts** from MANA.md based on commander CMC and game length
+- **Land cuts should be strategic** based on the mana curve guidelines
+- **When in doubt, prioritize cutting spells** over core manabase lands
 - **Count lands carefully** - don't accidentally cut more lands than intended
-- **Prioritize cutting spells** when reducing deck size, not lands
 
 **Mana Curve Guidelines from MANA.md:**
 
@@ -320,7 +313,6 @@ npx ts-node src/ai-optimize-deck.ts validate decks/<format>/<deck-name>/YYYYMMDD
 The validation tool will check:
 
 - Total card count is exactly 100 (for Commander) - **This is 1 Commander + 99 Mainboard = 100 TOTAL**
-- Land count is at least 37 (for Commander)
 - File has proper structure (Commander section, Stats section, etc.)
 
 **Common validation failures and how to fix them:**
@@ -330,13 +322,9 @@ The validation tool will check:
     - Fix: Remove 1 card from any mainboard section (Creature, Instant, Sorcery, etc.)
     - The correct formula is: 1 Commander + 99 Mainboard = 100 TOTAL
 
-2. **"Land count is 36, minimum is 37"**
-    - You need to add 1 more land OR remove 1 spell to make room for another land
-    - Commander decks need 37-38 lands minimum
-
-3. **Any validation failure:**
+2. **Any validation failure:**
     - **STOP immediately** - Do not create the next iteration
-    - **Fix the iteration file** to have exactly 100 cards and 37-38 lands
+    - **Fix the iteration file** to have exactly 100 cards
     - **Re-validate** using the same command until it passes
     - **DO NOT proceed to the next iteration** until current one passes validation
     - **DO NOT guess** at card counts - use the validation tool to verify
@@ -370,7 +358,6 @@ npx ts-node src/ai-optimize-deck.ts validate-all decks/<format>/<deck-name>/YYYY
 This will check that ALL iterations:
 
 - Have exactly 100 cards (or target size)
-- Have 35-38 lands minimum for Commander
 - Include all required sections
 
 If ANY iteration fails validation:
@@ -483,19 +470,15 @@ Include:
 
 ## Important Guidelines
 
-### Land Count is Sacred
+### Follow MANA.md Guidelines
 
-**MOST IMPORTANT RULE: DO NOT CUT TOO MANY LANDS**
+**MOST IMPORTANT RULE: FOLLOW RESEARCH-BACKED MANA CURVES**
 
-- Commander decks MUST have 37-38 lands (never less than 37)
-- Standard/Modern decks MUST have 23-26 lands (never less than 22)
-- Only cut lands if:
-    - Replacing with mana rocks/dorks (and deck still has 37+ lands total)
-    - Average CMC is exceptionally low (< 2.5) AND deck has 15+ ramp sources
-    - Cutting clearly bad utility lands (not core manabase)
-- When reducing deck size, prioritize cutting spells, NOT lands
-- Count your lands in every iteration to verify you haven't gone below minimum
-- If you find yourself cutting lands to hit target size, **cut more spells instead**
+- **Apply MANA.md research** for optimal land counts based on commander CMC and game length
+- **Land cuts must be strategic** based on the specific mana guidelines
+- When reducing deck size, prioritize cutting spells over core manabase
+- Count your lands in every iteration to verify they align with MANA.md recommendations
+- If you find yourself cutting too many lands to hit target size, **cut more spells instead**
 
 ### Deck Composition Guidelines
 
