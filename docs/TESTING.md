@@ -21,42 +21,135 @@ Tests are located in `src/__tests__/` directory, colocated with the source files
 
 ### Test Files
 
-- **`deck-parser.test.ts`** - Tests for parsing decklist formats
+- **`deck-parser.test.ts`** (28 tests) - Tests for parsing decklist formats
     - Different quantity formats (4, 4x, no quantity)
     - Comments and section headers
     - Empty lines and whitespace handling
     - Mixed format decklists
+    - Edge cases: special characters, unicode, large quantities, single cards, card names starting with numbers
 
-- **`deck-analyzer.test.ts`** - Tests for deck analysis and statistics
+- **`deck-analyzer.test.ts`** (22 tests) - Tests for deck analysis and statistics
     - Color distribution calculation
     - Mana curve visualization
     - Card type breakdown
     - Average CMC calculation
-    - Edge cases (empty decks, expensive cards, colorless cards)
+    - Edge cases: empty decks, expensive cards, colorless cards, multicolor, artifact creatures
 
-- **`card-cache.test.ts`** - Tests for card caching functionality
+- **`card-cache.test.ts`** (28 tests) - Tests for card caching functionality
     - Cache loading and saving
     - Card retrieval and storage
     - Cache statistics
     - Error handling
     - Minimal storage format verification
+    - Edge cases: corrupted files, empty caches, special characters
 
-- **`card-counter.test.ts`** - Tests for card counting utilities
+- **`card-counter.test.ts`** (39 tests) - Tests for card counting utilities
     - Card counting in text and files
     - Category parsing and validation
     - Command-line argument parsing
     - Formatted output generation
+    - Edge cases: large quantities, zero quantities, nested categories, whitespace
+
+- **`moxfield-cache.test.ts`** (19 tests) - Tests for Moxfield deck caching
+    - Cache persistence and expiry
+    - Metadata management
+    - File existence validation
+    - Time-based cache invalidation
+    - Multi-deck support
+
+- **`moxfield-client.test.ts`** (33 tests) - Tests for Moxfield API client
+    - Deck fetching from Moxfield API
+    - Deck saving to local files
+    - Format directory mapping (commander, standard, modern, other)
+    - Deck ID extraction from URLs
+    - File naming and sanitization
+    - Cache integration
+    - Error handling (404, network errors)
+    - Edge cases: empty boards, missing data, long names, special characters
+
+- **`scryfall-client.test.ts`** (15 tests) - Tests for Scryfall API client
+    - Card fetching by name
+    - Batch card fetching
+    - Card data mapping
+    - API rate limiting (100ms delays)
+    - Error handling (404, network errors)
+    - Edge cases: double-faced cards, special characters, missing fields
 
 ## Coverage
 
-Current coverage targets core business logic:
+Current coverage (184 tests total):
 
-- `card-cache.ts`: 98.14% coverage
-- `deck-analyzer.ts`: 98.75% coverage
-- `deck-parser.ts`: 96.77% coverage
-- `card-counter.ts`: 75.19% coverage
+- `deck-parser.ts`: **100%** statements, **94.11%** branches (28 tests)
+- `scryfall-client.ts`: **100%** statements, **100%** branches (15 tests)
+- `moxfield-cache.ts`: **100%** statements, **100%** branches (19 tests)
+- `moxfield-client.ts`: **98.88%** statements, **87.71%** branches (33 tests)
+- `card-cache.ts`: **98.14%** statements, **95%** branches (28 tests)
+- `deck-analyzer.ts`: **98.75%** statements, **89.47%** branches (22 tests)
+- `card-counter.ts`: **75.19%** statements, **75.28%** branches (39 tests)
 
-API clients (`scryfall-client.ts`, `moxfield-client.ts`) and entry point scripts are excluded from coverage requirements as they primarily make HTTP calls and require integration testing.
+**Overall: 92.23% statement coverage, 85.59% branch coverage, 98.55% function coverage**
+
+Entry point scripts (`index.ts`, `import-moxfield.ts`, `ai-optimize-deck.ts`) and type definitions (`types.ts`) are excluded from coverage as they are CLI entry points without testable business logic.
+
+## Bugs Discovered and Fixed
+
+During comprehensive test writing, the following bugs were discovered and fixed:
+
+### 1. Deck Parser - Restrictive Card Name Regex (Fixed)
+
+**File:** `src/deck-parser.ts`
+
+**Issue:** The parser used pattern `/^([a-zA-Z].+)$/` which required card names to start with a letter. This failed to parse cards with:
+
+- Numbers at the start (e.g., "8.5 Tails")
+- Special characters at the start (e.g., "Æther Vial")
+
+**Fix:** Changed pattern to `/^(.+)$/` with additional validation to exclude pure numbers:
+
+```typescript
+// Before
+const match = line.match(/^([a-zA-Z].+)$/);
+
+// After
+const match = line.match(/^(.+)$/);
+if (match && !/^\d+$/.test(match[1])) {
+    return { quantity: 1, cardName: match[1].trim() };
+}
+```
+
+**Test Coverage:** Added tests for "8.5 Tails" and "Æther Vial" to prevent regression.
+
+### 2. Moxfield Client - Unsafe Metadata Access (Fixed)
+
+**File:** `src/moxfield-client.ts`
+
+**Issue:** The code accessed `metadata!.lastFetched` without checking if `metadata` was undefined:
+
+```typescript
+const metadata = this.cache.getMetadata(deckId);
+console.log(`📦 Using cached deck (fetched ${new Date(metadata!.lastFetched).toLocaleString()})`);
+```
+
+This caused `TypeError: Cannot read properties of undefined (reading 'lastFetched')` when cache metadata didn't exist.
+
+**Fix:** Added null check before accessing metadata:
+
+```typescript
+const metadata = this.cache.getMetadata(deckId);
+if (metadata) {
+    const timeUntilExpiry = this.cache.getTimeUntilExpiry(deckId);
+    const minutesUntilExpiry = timeUntilExpiry ? Math.ceil(timeUntilExpiry / 1000 / 60) : 0;
+
+    console.log(
+        `📦 Using cached deck (fetched ${new Date(metadata.lastFetched).toLocaleString()})`
+    );
+    console.log(`   Cache expires in ${minutesUntilExpiry} minutes`);
+    console.log(`   Use --force to refresh now\n`);
+    return deckFolder;
+}
+```
+
+**Test Coverage:** Added tests to verify cache behavior with and without existing metadata.
 
 ## Writing Tests
 

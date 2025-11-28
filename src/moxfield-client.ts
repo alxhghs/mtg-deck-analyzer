@@ -75,15 +75,19 @@ export class MoxfieldClient {
         // Check if we need to fetch from API
         if (!forceRefresh && !this.cache.shouldFetch(deckId, filePath)) {
             const metadata = this.cache.getMetadata(deckId);
-            const timeUntilExpiry = this.cache.getTimeUntilExpiry(deckId);
-            const minutesUntilExpiry = timeUntilExpiry ? Math.ceil(timeUntilExpiry / 1000 / 60) : 0;
+            if (metadata) {
+                const timeUntilExpiry = this.cache.getTimeUntilExpiry(deckId);
+                const minutesUntilExpiry = timeUntilExpiry
+                    ? Math.ceil(timeUntilExpiry / 1000 / 60)
+                    : 0;
 
-            console.log(
-                `📦 Using cached deck (fetched ${new Date(metadata!.lastFetched).toLocaleString()})`
-            );
-            console.log(`   Cache expires in ${minutesUntilExpiry} minutes`);
-            console.log(`   Use --force to refresh now\n`);
-            return deckFolder;
+                console.log(
+                    `📦 Using cached deck (fetched ${new Date(metadata.lastFetched).toLocaleString()})`
+                );
+                console.log(`   Cache expires in ${minutesUntilExpiry} minutes`);
+                console.log(`   Use --force to refresh now\n`);
+                return deckFolder;
+            }
         }
 
         // Build decklist content

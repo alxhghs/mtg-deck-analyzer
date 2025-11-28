@@ -59,12 +59,18 @@ export class DeckParser {
         }
 
         // Pattern 2: Just the card name (default to 1)
-        const match2 = line.match(/^([a-zA-Z].+)$/);
+        // Accept any non-empty string that doesn't start with only digits
+        // This allows card names starting with numbers like "8.5 Tails" or special chars like "Æther Vial"
+        const match2 = line.match(/^(.+)$/);
         if (match2) {
-            return {
-                quantity: 1,
-                name: match2[1].trim(),
-            };
+            const name = match2[1].trim();
+            // Make sure it's not just a number (which would be invalid)
+            if (name && !/^\d+$/.test(name)) {
+                return {
+                    quantity: 1,
+                    name: name,
+                };
+            }
         }
 
         return null;

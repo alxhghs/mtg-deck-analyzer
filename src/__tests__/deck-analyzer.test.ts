@@ -308,5 +308,186 @@ describe("DeckAnalyzer", () => {
             // Should cap at 7+
             expect(analysis).toMatch(/7\+:.*1/);
         });
+
+        it("should handle multicolor cards correctly", () => {
+            const multicolorCard: Card = {
+                id: "101",
+                name: "Lightning Helix",
+                mana_cost: "{R}{W}",
+                cmc: 2,
+                type_line: "Instant",
+                oracle_text: "Lightning Helix deals 3 damage to any target and you gain 3 life.",
+                colors: ["R", "W"],
+                color_identity: ["R", "W"],
+                set: "RAV",
+                rarity: "uncommon",
+            };
+
+            const cards = new Map<string, Card>();
+            cards.set("Lightning Helix", multicolorCard);
+
+            const deck: Deck = {
+                cards: [{ name: "Lightning Helix", quantity: 4 }],
+                totalCards: 4,
+            };
+
+            const analyzer = new DeckAnalyzer(deck, cards);
+            const analysis = analyzer.analyze();
+
+            // Both red and white should be counted
+            expect(analysis).toContain("Red:");
+            expect(analysis).toContain("White:");
+        });
+
+        it("should handle deck with no lands when calculating average CMC", () => {
+            const nonLandCard: Card = {
+                id: "102",
+                name: "Mox Diamond",
+                mana_cost: "{0}",
+                cmc: 0,
+                type_line: "Artifact",
+                oracle_text:
+                    "If Mox Diamond would enter the battlefield, you may discard a land card instead.",
+                colors: [],
+                color_identity: [],
+                set: "STH",
+                rarity: "rare",
+            };
+
+            const cards = new Map<string, Card>();
+            cards.set("Mox Diamond", nonLandCard);
+
+            const deck: Deck = {
+                cards: [{ name: "Mox Diamond", quantity: 4 }],
+                totalCards: 4,
+            };
+
+            const analyzer = new DeckAnalyzer(deck, cards);
+            const analysis = analyzer.analyze();
+
+            expect(analysis).toContain("Average CMC (non-land): 0.00");
+        });
+
+        it("should handle deck with multiple card types", () => {
+            const artifactCreature: Card = {
+                id: "103",
+                name: "Ornithopter",
+                mana_cost: "{0}",
+                cmc: 0,
+                type_line: "Artifact Creature — Thopter",
+                oracle_text: "Flying",
+                colors: [],
+                color_identity: [],
+                set: "M15",
+                rarity: "common",
+            };
+
+            const cards = new Map<string, Card>();
+            cards.set("Ornithopter", artifactCreature);
+
+            const deck: Deck = {
+                cards: [{ name: "Ornithopter", quantity: 4 }],
+                totalCards: 4,
+            };
+
+            const analyzer = new DeckAnalyzer(deck, cards);
+            const analysis = analyzer.analyze();
+
+            // Should count in both Artifact and Creature
+            expect(analysis).toContain("Artifact:");
+            expect(analysis).toContain("Creature:");
+        });
+
+        it("should handle cards with no mana cost", () => {
+            const noManaCostCard: Card = {
+                id: "104",
+                name: "Ancestral Vision",
+                cmc: 0,
+                type_line: "Sorcery",
+                oracle_text: "Suspend 4—{U}",
+                colors: ["U"],
+                color_identity: ["U"],
+                set: "TSP",
+                rarity: "rare",
+            };
+
+            const cards = new Map<string, Card>();
+            cards.set("Ancestral Vision", noManaCostCard);
+
+            const deck: Deck = {
+                cards: [{ name: "Ancestral Vision", quantity: 4 }],
+                totalCards: 4,
+            };
+
+            const analyzer = new DeckAnalyzer(deck, cards);
+            const deckList = analyzer.displayDeckList();
+
+            expect(deckList).toContain("N/A");
+        });
+
+        it("should handle very large decks", () => {
+            const card: Card = {
+                id: "105",
+                name: "Plains",
+                cmc: 0,
+                type_line: "Basic Land — Plains",
+                set: "M21",
+                rarity: "common",
+                colors: [],
+                color_identity: ["W"],
+            };
+
+            const cards = new Map<string, Card>();
+            cards.set("Plains", card);
+
+            const deck: Deck = {
+                cards: [{ name: "Plains", quantity: 250 }],
+                totalCards: 250,
+            };
+
+            const analyzer = new DeckAnalyzer(deck, cards);
+            const analysis = analyzer.analyze();
+
+            expect(analysis).toContain("Total Cards: 250");
+        });
+
+        it("should handle deck with mixed land and non-land cards for CMC", () => {
+            const cards = new Map<string, Card>();
+            cards.set("Lightning Bolt", {
+                id: "1",
+                name: "Lightning Bolt",
+                mana_cost: "{R}",
+                cmc: 1,
+                type_line: "Instant",
+                colors: ["R"],
+                color_identity: ["R"],
+                set: "LEA",
+                rarity: "common",
+            });
+            cards.set("Mountain", {
+                id: "2",
+                name: "Mountain",
+                cmc: 0,
+                type_line: "Basic Land — Mountain",
+                colors: [],
+                color_identity: ["R"],
+                set: "LEA",
+                rarity: "common",
+            });
+
+            const deck: Deck = {
+                cards: [
+                    { name: "Lightning Bolt", quantity: 4 },
+                    { name: "Mountain", quantity: 20 },
+                ],
+                totalCards: 24,
+            };
+
+            const analyzer = new DeckAnalyzer(deck, cards);
+            const analysis = analyzer.analyze();
+
+            // Average should only count non-lands
+            expect(analysis).toContain("Average CMC (non-land): 1.00");
+        });
     });
 });

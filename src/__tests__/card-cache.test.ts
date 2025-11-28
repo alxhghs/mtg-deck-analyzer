@@ -304,4 +304,152 @@ describe("CardCache", () => {
             expect(savedCard).not.toHaveProperty("rarity");
         });
     });
+
+    describe("edge cases and error handling", () => {
+        it("should handle corrupted cache file gracefully", () => {
+            (fs.existsSync as jest.Mock).mockReturnValue(true);
+            (fs.readFileSync as jest.Mock).mockReturnValue("{ invalid json");
+
+            expect(() => new CardCache("/path/to/cache.json")).not.toThrow();
+            expect(console.error).toHaveBeenCalledWith("Error loading cache:", expect.any(Error));
+        });
+
+        it("should handle empty cache file", () => {
+            (fs.existsSync as jest.Mock).mockReturnValue(true);
+            (fs.readFileSync as jest.Mock).mockReturnValue("{}");
+
+            const cache = new CardCache("/path/to/cache.json");
+            const stats = cache.getStats();
+
+            expect(stats.size).toBe(0);
+        });
+
+        it("should handle cache with undefined values", () => {
+            const cacheWithUndefined = {
+                Card1: {
+                    card: mockCard,
+                    cachedAt: "2025-11-27T10:00:00.000Z",
+                },
+                Card2: undefined,
+            };
+
+            (fs.existsSync as jest.Mock).mockReturnValue(true);
+            (fs.readFileSync as jest.Mock).mockReturnValue(JSON.stringify(cacheWithUndefined));
+
+            const cache = new CardCache("/path/to/cache.json");
+
+            expect(cache.has("Card1")).toBe(true);
+            expect(cache.has("Card2")).toBe(false);
+        });
+
+        it("should handle card with missing optional fields", () => {
+            const minimalCard: Card = {
+                id: "1",
+                name: "Test Card",
+                cmc: 1,
+                type_line: "Instant",
+                set: "TST",
+                rarity: "common",
+            };
+
+            (fs.existsSync as jest.Mock).mockReturnValue(false);
+            (fs.mkdirSync as jest.Mock).mockReturnValue(undefined);
+            (fs.writeFileSync as jest.Mock).mockReturnValue(undefined);
+
+            const cache = new CardCache("/path/to/cache.json");
+            cache.set("Test Card", minimalCard);
+
+            const retrieved = cache.get("Test Card");
+            expect(retrieved?.name).toBe("Test Card");
+        });
+
+        it("should handle multiple set operations", () => {
+            (fs.existsSync as jest.Mock).mockReturnValue(false);
+            (fs.mkdirSync as jest.Mock).mockReturnValue(undefined);
+            (fs.writeFileSync as jest.Mock).mockReturnValue(undefined);
+
+            const cache = new CardCache("/path/to/cache.json");
+
+            cache.set("Card1", mockCard);
+            cache.set("Card2", mockCard);
+            cache.set("Card3", mockCard);
+
+            expect(fs.writeFileSync).toHaveBeenCalledTimes(3);
+        });
+
+        it("should handle setMany with empty map", () => {
+            (fs.existsSync as jest.Mock).mockReturnValue(false);
+            (fs.mkdirSync as jest.Mock).mockReturnValue(undefined);
+            (fs.writeFileSync as jest.Mock).mockReturnValue(undefined);
+
+            const cache = new CardCache("/path/to/cache.json");
+            const emptyMap = new Map<string, Card>();
+
+            cache.setMany(emptyMap);
+
+            expect(fs.writeFileSync).toHaveBeenCalledTimes(1);
+        });
+
+        it("should preserve cachedAt timestamp for existing cards", () => {
+            const oldTimestamp = "2025-11-27T09:00:00.000Z";
+            const mockCacheData = {
+                "Lightning Bolt": {
+                    card: mockCard,
+                    cachedAt: oldTimestamp,
+                },
+            };
+
+            (fs.existsSync as jest.Mock).mockReturnValue(true);
+            (fs.readFileSync as jest.Mock).mockReturnValue(JSON.stringify(mockCacheData));
+
+            const cache = new CardCache("/path/to/cache.json");
+            const stats = cache.getStats();
+
+            expect(stats.oldestEntry).toBe(oldTimestamp);
+        });
+
+        it("should handle card names with special characters in cache", () => {
+            const specialCard: Card = {
+                ...mockCard,
+                name: "Lim-Dûl's Vault",
+            };
+
+            (fs.existsSync as jest.Mock).mockReturnValue(false);
+            (fs.mkdirSync as jest.Mock).mockReturnValue(undefined);
+            (fs.writeFileSync as jest.Mock).mockReturnValue(undefined);
+
+            const cache = new CardCache("/path/to/cache.json");
+            cache.set("Lim-Dûl's Vault", specialCard);
+
+            expect(cache.has("Lim-Dûl's Vault")).toBe(true);
+        });
+
+        it("should handle getStats with single card", () => {
+            const mockCacheData = {
+                Card1: {
+                    card: mockCard,
+                    cachedAt: "2025-11-27T10:00:00.000Z",
+                },
+            };
+
+            (fs.existsSync as jest.Mock).mockReturnValue(true);
+            (fs.readFileSync as jest.Mock).mockReturnValue(JSON.stringify(mockCacheData));
+
+            const cache = new CardCache("/path/to/cache.json");
+            const stats = cache.getStats();
+
+            expect(stats.size).toBe(1);
+            expect(stats.oldestEntry).toBe(stats.newestEntry);
+        });
+
+        it("should handle clear when cache is already empty", () => {
+            (fs.existsSync as jest.Mock).mockReturnValue(false);
+            (fs.mkdirSync as jest.Mock).mockReturnValue(undefined);
+
+            const cache = new CardCache("/path/to/cache.json");
+            cache.clear();
+
+            expect(cache.has("anything")).toBe(false);
+        });
+    });
 });

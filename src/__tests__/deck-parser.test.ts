@@ -174,4 +174,123 @@ Sideboard:
             expect(result).toBe("Total Cards: 0\n\n");
         });
     });
+
+    describe("edge cases and error handling", () => {
+        it("should handle lines with only numbers", () => {
+            const content = `123\n456`;
+            const result = DeckParser.parseDecklistContent(content);
+
+            // Numbers alone should not be parsed as cards
+            expect(result.cards).toHaveLength(0);
+            expect(result.totalCards).toBe(0);
+        });
+
+        it("should handle very large quantities", () => {
+            const content = `999 Plains`;
+            const result = DeckParser.parseDecklistContent(content);
+
+            expect(result.cards[0].quantity).toBe(999);
+            expect(result.totalCards).toBe(999);
+        });
+
+        it("should handle card names with apostrophes", () => {
+            const content = `4 Jace's Ingenuity`;
+            const result = DeckParser.parseDecklistContent(content);
+
+            expect(result.cards[0].name).toBe("Jace's Ingenuity");
+        });
+
+        it("should handle card names with hyphens", () => {
+            const content = `4 Thrun, the Last Troll\n2 Snapcaster Mage`;
+            const result = DeckParser.parseDecklistContent(content);
+
+            expect(result.cards[0].name).toBe("Thrun, the Last Troll");
+        });
+
+        it("should handle card names with numbers", () => {
+            const content = `1 Urza's Saga\n4 K'rrik, Son of Yawgmoth`;
+            const result = DeckParser.parseDecklistContent(content);
+
+            expect(result.cards[0].name).toBe("Urza's Saga");
+            expect(result.cards[1].name).toBe("K'rrik, Son of Yawgmoth");
+        });
+
+        it("should handle mixed case section headers", () => {
+            const content = `MAINBOARD:\n4 Lightning Bolt\nSIDEBOARD:\n3 Counterspell\nCOMMANDER:\n1 Sol Ring`;
+            const result = DeckParser.parseDecklistContent(content);
+
+            expect(result.totalCards).toBe(8);
+            expect(result.cards).toHaveLength(3);
+        });
+
+        it("should handle lines with multiple spaces", () => {
+            const content = `4    Lightning    Bolt`;
+            const result = DeckParser.parseDecklistContent(content);
+
+            expect(result.cards[0].name).toBe("Lightning    Bolt");
+        });
+
+        it("should handle unicode characters in card names", () => {
+            const content = `1 Æther Vial\n1 Lim-Dûl's Vault`;
+            const result = DeckParser.parseDecklistContent(content);
+
+            expect(result.cards[0].name).toBe("Æther Vial");
+            expect(result.cards[1].name).toBe("Lim-Dûl's Vault");
+        });
+
+        it("should handle deck with only comments", () => {
+            const content = `# Comment 1\n// Comment 2\n# Comment 3`;
+            const result = DeckParser.parseDecklistContent(content);
+
+            expect(result.cards).toHaveLength(0);
+            expect(result.totalCards).toBe(0);
+        });
+
+        it("should handle deck with only section headers", () => {
+            const content = `Mainboard:\nSideboard:\nCommander:`;
+            const result = DeckParser.parseDecklistContent(content);
+
+            expect(result.cards).toHaveLength(0);
+            expect(result.totalCards).toBe(0);
+        });
+
+        it("should handle single card deck", () => {
+            const content = `Black Lotus`;
+            const result = DeckParser.parseDecklistContent(content);
+
+            expect(result.cards).toHaveLength(1);
+            expect(result.cards[0]).toEqual({ quantity: 1, name: "Black Lotus" });
+            expect(result.totalCards).toBe(1);
+        });
+
+        it("should handle card names starting with numbers (no quantity)", () => {
+            // Card names starting with non-digit numbers work
+            const content = `8.5 Tails`;
+            const result = DeckParser.parseDecklistContent(content);
+
+            expect(result.cards).toHaveLength(1);
+            expect(result.cards[0].name).toBe("8.5 Tails");
+            expect(result.cards[0].quantity).toBe(1);
+        });
+
+        it("should parse lines starting with only digits as quantity", () => {
+            // Lines like "1998 World Championship Card" are ambiguous but parsed as quantity
+            const content = `1998 World Championship Card`;
+            const result = DeckParser.parseDecklistContent(content);
+
+            // This is treated as quantity 1998 of "World Championship Card"
+            expect(result.cards).toHaveLength(1);
+            expect(result.cards[0].quantity).toBe(1998);
+            expect(result.cards[0].name).toBe("World Championship Card");
+        });
+
+        it("should handle card names starting with special characters (no quantity)", () => {
+            const content = `Æther Vial\n"Ach! Hans, Run!"`;
+            const result = DeckParser.parseDecklistContent(content);
+
+            expect(result.cards).toHaveLength(2);
+            expect(result.cards[0].name).toBe("Æther Vial");
+            expect(result.cards[1].name).toBe('"Ach! Hans, Run!"');
+        });
+    });
 });
