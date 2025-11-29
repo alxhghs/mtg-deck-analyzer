@@ -1,39 +1,45 @@
-import axios from "axios";
+import MoxfieldApi from "moxfield-api";
 import * as fs from "fs";
 import * as path from "path";
 import { MoxfieldCache } from "./moxfield-cache";
 
-const MOXFIELD_API_BASE = "https://api2.moxfield.com/v3/decks/all";
-
+// Define minimal interfaces based on the actual API response structure
 interface MoxfieldCard {
+    name: string;
+    mana_cost?: string | null;
+    type_line: string;
+    cmc: number;
+    oracle_text?: string | null;
+    colors: string[];
+    color_identity: string[];
+}
+
+interface MoxfieldBoardCard {
     quantity: number;
-    card?: {
-        name: string;
-    };
-    name?: string;
+    card: MoxfieldCard;
 }
 
 interface MoxfieldBoard {
-    count: number;
-    cards: Record<string, MoxfieldCard>;
+    cards: Record<string, MoxfieldBoardCard>;
 }
 
 interface MoxfieldDeck {
     name: string;
     format: string;
-    main?: any;
     boards?: {
+        commanders?: MoxfieldBoard;
         mainboard?: MoxfieldBoard;
         sideboard?: MoxfieldBoard;
-        commanders?: MoxfieldBoard;
     };
 }
 
 export class MoxfieldClient {
     private cache: MoxfieldCache;
+    private api: MoxfieldApi;
 
     constructor() {
         this.cache = new MoxfieldCache();
+        this.api = new MoxfieldApi();
     }
 
     /**
@@ -42,25 +48,12 @@ export class MoxfieldClient {
      */
     async getDeck(deckId: string): Promise<MoxfieldDeck> {
         try {
-            const response = await axios.get(`${MOXFIELD_API_BASE}/${deckId}`, {
-                headers: {
-                    "User-Agent":
-                        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-                    Accept: "application/json, text/plain, */*",
-                    "Accept-Language": "en-US,en;q=0.9",
-                    "Accept-Encoding": "gzip, deflate, br",
-                    Connection: "keep-alive",
-                    "Sec-Fetch-Dest": "empty",
-                    "Sec-Fetch-Mode": "cors",
-                    "Sec-Fetch-Site": "same-site",
-                },
-                timeout: 10000,
-            });
-            return response.data;
+            return (await this.api.deckList.findById(deckId)) as MoxfieldDeck;
         } catch (error: any) {
-            if (error.response?.status === 404) {
+            // Handle common Moxfield API errors
+            if (error.message?.includes("404") || error.message?.includes("not found")) {
                 throw new Error(`Deck not found: ${deckId}. Make sure the deck is public.`);
-            } else if (error.response?.status === 403) {
+            } else if (error.message?.includes("403") || error.message?.includes("forbidden")) {
                 throw new Error(
                     `Access forbidden: ${deckId}. Moxfield API may be temporarily blocked by Cloudflare or require authentication. Try again later.`
                 );
@@ -87,7 +80,7 @@ export class MoxfieldClient {
             ? this.sanitizeFileName(deckName)
             : this.sanitizeFileName(deck.name);
         const deckFolder = path.join("decks", formatDir, folderName);
-        const filePath = path.join(deckFolder, "moxfield.md");
+        const filePath = path.join(deckFolder, "moxfield.txt");
 
         // Check if we need to fetch from API
         if (!forceRefresh && !this.cache.shouldFetch(deckId, filePath)) {
@@ -112,48 +105,35 @@ export class MoxfieldClient {
         content += `# Format: ${deck.format}\n`;
         content += `# Imported from Moxfield: https://www.moxfield.com/decks/${deckId}\n\n`;
 
-        // Add commander if present (main card in Commander format)
-        if (deck.main) {
-            content += "# Commander (1)\n";
-            content += `1 ${deck.main.name}\n\n`;
-        } else if (deck.boards?.commanders?.cards) {
-            // Add commanders from boards if no main commander
-            const commanderCards = Object.values(deck.boards.commanders.cards);
+        // Add commanders if present
+        if (deck.boards?.commanders?.cards) {
+            const commanderCards = this.extractCardsFromBoard(deck.boards.commanders.cards);
             const commanderTotal = commanderCards.reduce((sum, card) => sum + card.quantity, 0);
             content += `# Commander (${commanderTotal})\n`;
-            commanderCards.forEach((cardData) => {
-                const name = cardData.card?.name || cardData.name;
-                if (name) {
-                    content += `${cardData.quantity} ${name}\n`;
-                }
+            commanderCards.forEach((card) => {
+                content += `${card.quantity} ${card.name}\n`;
             });
             content += "\n";
         }
 
         // Add mainboard
         if (deck.boards?.mainboard?.cards) {
-            const mainboardCards = Object.values(deck.boards.mainboard.cards);
+            const mainboardCards = this.extractCardsFromBoard(deck.boards.mainboard.cards);
             const mainboardTotal = mainboardCards.reduce((sum, card) => sum + card.quantity, 0);
             content += `# Mainboard (${mainboardTotal})\n`;
-            mainboardCards.forEach((cardData) => {
-                const name = cardData.card?.name || cardData.name;
-                if (name) {
-                    content += `${cardData.quantity} ${name}\n`;
-                }
+            mainboardCards.forEach((card) => {
+                content += `${card.quantity} ${card.name}\n`;
             });
             content += "\n";
         }
 
         // Add sideboard if present
         if (deck.boards?.sideboard?.cards) {
-            const sideboardCards = Object.values(deck.boards.sideboard.cards);
+            const sideboardCards = this.extractCardsFromBoard(deck.boards.sideboard.cards);
             const sideboardTotal = sideboardCards.reduce((sum, card) => sum + card.quantity, 0);
             content += `# Sideboard (${sideboardTotal})\n`;
-            sideboardCards.forEach((cardData) => {
-                const name = cardData.card?.name || cardData.name;
-                if (name) {
-                    content += `${cardData.quantity} ${name}\n`;
-                }
+            sideboardCards.forEach((card) => {
+                content += `${card.quantity} ${card.name}\n`;
             });
         }
 
@@ -162,13 +142,25 @@ export class MoxfieldClient {
             fs.mkdirSync(deckFolder, { recursive: true });
         }
 
-        // Save moxfield.md
+        // Save moxfield.txt
         fs.writeFileSync(filePath, content);
 
         // Update cache
         this.cache.updateCache(deckId, filePath);
 
         return deckFolder;
+    }
+
+    /**
+     * Extract card data from a board's cards object
+     */
+    private extractCardsFromBoard(
+        cards: Record<string, MoxfieldBoardCard>
+    ): Array<{ name: string; quantity: number }> {
+        return Object.values(cards).map((cardData) => ({
+            name: cardData.card.name,
+            quantity: cardData.quantity,
+        }));
     }
 
     /**

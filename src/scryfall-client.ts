@@ -1,7 +1,6 @@
-import axios from "axios";
+import { Cards } from "scryfall-api";
 import { Card } from "./types";
 
-const SCRYFALL_API_BASE = "https://api.scryfall.com";
 const DELAY_MS = 100; // Scryfall requests 50-100ms delay between requests
 
 export class ScryfallClient {
@@ -16,15 +15,15 @@ export class ScryfallClient {
         try {
             await this.delay();
 
-            const response = await axios.get(`${SCRYFALL_API_BASE}/cards/named`, {
-                params: {
-                    exact: cardName,
-                },
-            });
+            const scryfallCard = await Cards.byName(cardName, false); // exact match only
+            if (!scryfallCard) {
+                console.warn(`Card not found: ${cardName}`);
+                return null;
+            }
 
-            return this.mapScryfallCard(response.data);
+            return this.mapScryfallCard(scryfallCard);
         } catch (error: any) {
-            if (error.response?.status === 404) {
+            if (error.message?.includes("not found") || error.status === 404) {
                 console.warn(`Card not found: ${cardName}`);
                 return null;
             }

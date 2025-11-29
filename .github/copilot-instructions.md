@@ -74,6 +74,9 @@ Within each deck folder:
 
 - `npm run import <moxfield-url> [deck-name]` - Import from Moxfield to `decks/<format>/<deck-name>/`
 - `npm run dev <deck-folder>/moxfield.txt` - Analyze a deck (development mode)
+- `npm run fetch "Card Name"` - Fetch and cache individual cards for verification
+- `npm run fetch "Card 1" "Card 2"` - Fetch multiple cards at once
+- `npm run fetch --cache` - Show cache statistics
 - `npm run build` - Compile TypeScript
 - `npm start <deck-file>` - Run compiled version
 
@@ -132,6 +135,30 @@ When the user asks about a deck by name (e.g., "help me get the blood-rites deck
     - Run `npm run import <moxfield-url> <deck-name>` (optional deck name, will use Moxfield name if omitted)
     - Then run analysis: `npm run dev decks/<format>/<deck-name>/moxfield.txt`
     - **Read `decks/<format>/<deck-name>/moxfield-cache.json`** for card details
+
+## When User Asks About Specific Cards
+
+When the user asks about specific Magic: The Gathering cards or you need to verify card details:
+
+1. **First, check the global Scryfall cache** at `/scryfall-cache.json`
+    - Read this file to see if the card is already cached
+    - The cache contains essential card data: mana cost, type, oracle text, colors
+
+2. **If card is not in cache or you need to verify details:**
+    - Use `npm run fetch "Card Name"` to fetch and cache the card
+    - For multiple cards: `npm run fetch "Card 1" "Card 2" "Card 3"`
+    - This automatically saves to the global cache for future reference
+
+3. **Examples of when to fetch cards:**
+    - User asks "What does [Card Name] do?"
+    - You're unsure about a card's exact abilities or type
+    - Making recommendations and need to verify card interactions
+    - Comparing different cards for deck optimization
+
+4. **Cache management:**
+    - Use `npm run fetch --cache` to see cache stats
+    - The cache persists between conversations for quick reference
+    - Always verify card details from cache before making recommendations
 
 ## Known Deck URLs
 

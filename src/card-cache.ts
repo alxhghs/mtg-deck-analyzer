@@ -70,6 +70,12 @@ export class CardCache {
         try {
             const cacheData: Record<string, any> = {};
             this.cache.forEach((value, key) => {
+                // Skip entries with undefined cards
+                if (!value || !value.card) {
+                    console.warn(`Skipping cache entry '${key}' - card data is undefined`);
+                    return;
+                }
+
                 // Store only essential fields in compact format
                 // Using short keys to reduce token usage
                 cacheData[key] = {
@@ -125,6 +131,12 @@ export class CardCache {
     setMany(cards: Map<string, Card>): void {
         const now = new Date().toISOString();
         cards.forEach((card, name) => {
+            // Skip undefined cards
+            if (!card) {
+                console.warn(`Skipping undefined card: ${name}`);
+                return;
+            }
+
             const cachedCard: CachedCard = {
                 card,
                 cachedAt: now,
