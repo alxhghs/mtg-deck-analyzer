@@ -80,6 +80,53 @@ Within each deck folder:
 - `npm run build` - Compile TypeScript
 - `npm start <deck-file>` - Run compiled version
 
+## Hypergeometric Probability Calculator
+
+The `hypergeometric.ts` utility calculates probabilities for drawing specific cards from your deck.
+
+**When to use:**
+
+- Answering "What are the odds of drawing X by turn Y?"
+- Mulligan decisions ("Should I keep this hand?")
+- Evaluating land counts or combo piece redundancy
+- Testing deck consistency
+
+**Usage:**
+
+```bash
+# Probability of drawing at least 2 lands in opening hand (38 lands, 100 cards)
+npx ts-node src/hypergeometric.ts --deck 100 --target 38 --draw 7 --at-least 2
+
+# Probability of drawing at least 1 combo piece (3 in deck) in opening hand
+npx ts-node src/hypergeometric.ts --deck 100 --target 3 --draw 7 --at-least 1
+
+# Probability of drawing exactly 3 lands in opening hand
+npx ts-node src/hypergeometric.ts --deck 100 --target 38 --draw 7 --exactly 3
+
+# Probability of drawing both combo pieces by turn 5 (12 cards seen, 5 pieces total)
+npx ts-node src/hypergeometric.ts --deck 100 --target 5 --draw 12 --at-least 2
+
+# Mulligan decision: Probability of 2-4 lands in 6-card hand
+npx ts-node src/hypergeometric.ts --deck 99 --target 37 --draw 6 --between 2 4
+```
+
+**Parameters:**
+
+- `--deck N` - Total cards in deck (default: 100 for Commander)
+- `--target K` - Number of target cards in deck (e.g., lands, combo pieces)
+- `--draw n` - Number of cards drawn (default: 7 for opening hand)
+- `--exactly k` - Probability of drawing exactly k target cards
+- `--at-least k` - Probability of drawing at least k target cards
+- `--at-most k` - Probability of drawing at most k target cards
+- `--between k1 k2` - Probability of drawing between k1 and k2 target cards (inclusive)
+
+**Common Scenarios:**
+
+- Opening hand land probability: `--target <land_count> --draw 7 --between 2 4`
+- By turn 5 (12 cards): `--draw 12`
+- After mulligan to 6: `--deck 99 --target <adjusted_count> --draw 6`
+- Combo consistency: `--target <total_combo_pieces> --draw <turns_to_find> --at-least 2`
+
 ## AI Recommendations Workflow
 
 1. User runs deck analysis to get statistics
