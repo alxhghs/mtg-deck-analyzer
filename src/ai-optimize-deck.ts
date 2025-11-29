@@ -104,7 +104,7 @@ function validateAllIterations(folderPath: string, targetSize: number = 100): vo
 
     const files = fs
         .readdirSync(folderPath)
-        .filter((f) => f.startsWith("iteration-") && f.endsWith(".md"))
+        .filter((f) => f.startsWith("iteration-") && f.endsWith(".txt"))
         .sort();
 
     if (files.length === 0) {

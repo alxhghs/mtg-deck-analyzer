@@ -2,7 +2,6 @@
 title: Optimize Deck (AI Multi-Analysis)
 description: Run AI deck analysis 100 times with different priorities to find statistically optimal card selection
 agent: agent
-model: Claude Sonnet 4
 ---
 
 # Optimize Deck (AI Multi-Analysis)
