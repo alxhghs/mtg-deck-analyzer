@@ -3,119 +3,25 @@ Source: https://www.tcgplayer.com/content/article/How-to-Build-Commander-Mana-Cu
 ---
 
 One key aspect of deck building in Commander is making sure that you can consistently spend all your mana in an effective way. After all, if you don't spend the mana you have available on a given turn, then you don't get that mana back later on in the game. To this end, I crunched the numbers in a 2022 article entitled "What's an Optimal Mana Curve and Land/Ramp Count for Commander?" Using mathematical modeling and optimization, I derived the following rough theoretical frameworks. It's more of an intellectual curiosity than something that directly translates to actual decks, but simple models can still provide useful insights.
-Commander
-1-drops
-2-drops
-3-drops
-4-drops
-5-drops
-6-drops
-Mana rocks
-Lands
-2 mana
-9
-0
-20
-14
-9
-4
-Sol Ring + 0 Signet
-42
-3 mana
-8
-19
-0
-16
-10
-3
-Sol Ring + 0 Signet
-42
-4 mana
-6
-12
-13
-0
-13
-8
-Sol Ring + 7 Signet
-39
-5 mana
-6
-12
-10
-13
-0
-10
-Sol Ring + 8 Signet
-39
-6 mana
-6
-12
-10
-14
-9
-0
-Sol Ring + 9 Signet
-38
+| Commander | 1-drops | 2-drops | 3-drops | 4-drops | 5-drops | 6-drops | Mana rocks | Lands |
+|-----------|---------|---------|---------|---------|---------|---------|------------|-------|
+| 2 mana | 9 | 0 | 20 | 14 | 9 | 4 | Sol Ring + 0 Signet | 42 |
+| 3 mana | 8 | 19 | 0 | 16 | 10 | 3 | Sol Ring + 0 Signet | 42 |
+| 4 mana | 6 | 12 | 13 | 0 | 13 | 8 | Sol Ring + 7 Signet | 39 |
+| 5 mana | 6 | 12 | 10 | 13 | 0 | 10 | Sol Ring + 8 Signet | 39 |
+| 6 mana | 6 | 12 | 10 | 14 | 9 | 0 | Sol Ring + 9 Signet | 38 |
 
 In my model, whose assumptions are detailed in the aforementioned article, color requirements or the specifics of the cards were abstracted away, and all cards are supposed to be on-board effects. So, we don't care whether a three-drop is a Mayhem Devil or an Oko, Thief of Crowns - we treat it as an arbitrary permanent that contributes three mana worth of value every turn. The idealized decks shown in the table maximize, under certain assumptions on mulligans and gameplay logic, the expected compounded mana accrued over the first seven turns.
 My analysis in that article showed that the ideal curve depends on your Commander, that you should focus the bulk of your curve on two, three and four-drops, and that you should not skimp on lands. After publication, I received various questions. Interested readers wondered how the results would change if certain modeling assumptions were adjusted. So as a follow-up, today I will consider the impact of game length, ramp cost and competitive goals. As before, I used Monte Carlo simulation and a local search heuristic, as described in my Python code.
 What If Games Are Over By Turn 5?
 In my original study, I assumed that the relevant length of a typical game was seven turns, arguing that that is the part of the game where curving out matters the most and that usually one player will have an insurmountable board presence by turn seven. But, as asked by Ken Baumann, what if the power level of your decks is higher and games are often over by turn five? To investigate the impact, I adapted the assumptions and reran the simulations with turn five as the cutoff, while keeping other assumptions the same.
-Commander
-1-drops
-2-drops
-3-drops
-4-drops
-5-drops
-6-drops
-Mana rocks
-Lands
-2 mana
-24
-0
-21
-13
-2
-0
-Sol Ring + 0 Signet
-38
-3 mana
-24
-21
-0
-13
-2
-0
-Sol Ring + 0 Signet
-38
-4 mana
-25
-22
-14
-0
-1
-0
-Sol Ring + 0 Signet
-36
-5 mana
-23
-22
-12
-5
-0
-0
-Sol Ring + 0 Signet
-36
-6 mana
-20
-22
-12
-9
-0
-0
-Sol Ring + 0 Signet
-35
+| Commander | 1-drops | 2-drops | 3-drops | 4-drops | 5-drops | 6-drops | Mana rocks | Lands |
+|-----------|---------|---------|---------|---------|---------|---------|------------|-------|
+| 2 mana | 24 | 0 | 21 | 13 | 2 | 0 | Sol Ring + 0 Signet | 38 |
+| 3 mana | 24 | 21 | 0 | 13 | 2 | 0 | Sol Ring + 0 Signet | 38 |
+| 4 mana | 25 | 22 | 14 | 0 | 1 | 0 | Sol Ring + 0 Signet | 36 |
+| 5 mana | 23 | 22 | 12 | 5 | 0 | 0 | Sol Ring + 0 Signet | 36 |
+| 6 mana | 20 | 22 | 12 | 9 | 0 | 0 | Sol Ring + 0 Signet | 35 |
 
 Compared to the original table, we see far more one-drops, zero six-drops, no Signets and slightly lower land counts. Intuitively, the main goal in my simplified model becomes to play a one-drop on turn one, two-drop on turn two, and three-drop on turn three. For this, spending your mana in the early turns is essential. Due to the turn-five cutoff, there's no real risk of running out of cards before the game ends, so jamming two one-drops and two-drop on turn four is a perfectly fine way to use your mana that turn. The low-cost cards allow you to fill your gaps in later turns, and this changes the whole landscape of the idealized curve.
 In these short games, there's no guarantee that you can even cast a five or six-mana Commander, and two or three-mana Commanders with 38 lands yielded the highest expected compounded mana spent. A count of 38 lands in a 99-card deck corresponds to 23 lands in 60-card decks, which would seem reasonable to me if it wasn't for the large amount of "rituals" (Simian Spirit Guide, Chrome Mox, Dark Ritual and so on) typically seen in cEDH. I couldn't easily account for such rituals in my model, which means that the curves won't be directly applicable in that format, but I will say that I wouldn't replace lands by rituals one-for-one in practice. After all, hitting a land drop is equivalent to playing a free Mox, and missing a land drop is equivalent to a wasted ritual. If you spend mana on ramp spells, bit undo that progress by missing land drops, then you're not getting ahead. As a result, I could see 29 to 33 lands in ritual-heavy cEDH decks, but I wouldn't drop to 24 to 28 lands.
