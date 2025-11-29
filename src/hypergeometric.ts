@@ -128,6 +128,99 @@ export function hypergeometricBetween(
 }
 
 /**
+ * Card group for multivariate hypergeometric calculation
+ */
+export interface CardGroup {
+    count: number; // Number of this type of card in deck
+    min?: number; // Minimum number needed (default: 1)
+    max?: number; // Maximum number wanted (default: sample size)
+}
+
+/**
+ * Calculate probability of drawing specific amounts from multiple card groups
+ * Uses multivariate hypergeometric distribution
+ *
+ * Example: "What's the probability of drawing at least 1 Sanguine Bond effect (3 in deck)
+ * AND at least 1 Exquisite Blood effect (2 in deck) in 15 cards?"
+ *
+ * @param populationSize - Total number of cards in deck (N)
+ * @param groups - Array of card groups with their counts and constraints
+ * @param sampleSize - Number of cards drawn (n)
+ * @returns Probability of meeting all group constraints simultaneously
+ */
+export function multivariateHypergeometric(
+    populationSize: number,
+    groups: CardGroup[],
+    sampleSize: number
+): number {
+    // Validate inputs
+    const totalGroupCards = groups.reduce((sum, g) => sum + g.count, 0);
+    if (totalGroupCards > populationSize) {
+        throw new Error("Total group cards exceeds population size");
+    }
+
+    // Calculate number of "other" cards (cards not in any group)
+    const otherCards = populationSize - totalGroupCards;
+
+    let probability = 0;
+
+    // Generate all possible combinations that satisfy the constraints
+    function generateCombinations(
+        groupIndex: number,
+        currentCounts: number[],
+        remainingDraw: number
+    ): void {
+        // Base case: we've assigned counts for all groups
+        if (groupIndex === groups.length) {
+            // Check if we have a valid combination (constraints met)
+            let valid = true;
+            for (let i = 0; i < groups.length; i++) {
+                const min = groups[i].min ?? 1;
+                const max = groups[i].max ?? sampleSize;
+                if (currentCounts[i] < min || currentCounts[i] > max) {
+                    valid = false;
+                    break;
+                }
+            }
+
+            if (!valid) return;
+
+            // Calculate probability for this specific combination
+            // P = (C(K1,k1) * C(K2,k2) * ... * C(other, n-k1-k2-...)) / C(N, n)
+            let numerator = 1;
+
+            // Multiply binomial coefficients for each group
+            for (let i = 0; i < groups.length; i++) {
+                numerator *= binomialCoefficient(groups[i].count, currentCounts[i]);
+            }
+
+            // Multiply by binomial coefficient for "other" cards
+            const otherDrawn = remainingDraw;
+            numerator *= binomialCoefficient(otherCards, otherDrawn);
+
+            const denominator = binomialCoefficient(populationSize, sampleSize);
+
+            probability += numerator / denominator;
+            return;
+        }
+
+        // Recursive case: try all possible counts for current group
+        const group = groups[groupIndex];
+        const minDraw = Math.max(0, group.min ?? 0);
+        const maxDraw = Math.min(group.count, remainingDraw, group.max ?? sampleSize);
+
+        for (let count = minDraw; count <= maxDraw; count++) {
+            currentCounts[groupIndex] = count;
+            generateCombinations(groupIndex + 1, currentCounts, remainingDraw - count);
+        }
+    }
+
+    generateCombinations(0, [], sampleSize);
+
+    return probability;
+}
+
+/**
  * CLI interface for hypergeometric calculator
  */
 if (require.main === module) {
@@ -139,7 +232,7 @@ Hypergeometric Calculator for MTG Probability
 
 Usage: npx ts-node src/hypergeometric.ts [options]
 
-Options:
+Single Group Options:
   --deck <N>          Total cards in deck (default: 100)
   --target <K>        Number of target cards in deck (e.g., lands, combo pieces)
   --draw <n>          Number of cards drawn (default: 7 for opening hand)
@@ -148,21 +241,30 @@ Options:
   --at-most <k>       Calculate probability of drawing at most k target cards
   --between <k1> <k2> Calculate probability of drawing between k1 and k2 target cards
 
-Examples:
+Multiple Groups (Combo) Options:
+  --deck <N>          Total cards in deck (default: 100)
+  --draw <n>          Number of cards drawn (default: 7 for opening hand)
+  --group <count> <min> [max]  Define a card group (can specify multiple groups)
+                      count: Number of this card type in deck
+                      min: Minimum needed (use 1 for "at least 1")
+                      max: Maximum wanted (optional, defaults to sample size)
+
+Single Group Examples:
   # Probability of drawing exactly 3 lands in opening hand (38 lands, 100 card deck)
   npx ts-node src/hypergeometric.ts --deck 100 --target 38 --draw 7 --exactly 3
 
   # Probability of drawing at least 2 lands in opening hand
   npx ts-node src/hypergeometric.ts --deck 100 --target 38 --draw 7 --at-least 2
 
-  # Probability of drawing at least 1 of 3 combo pieces in opening hand
-  npx ts-node src/hypergeometric.ts --deck 100 --target 3 --draw 7 --at-least 1
-
   # Probability of drawing 2-4 lands in opening hand
   npx ts-node src/hypergeometric.ts --deck 100 --target 38 --draw 7 --between 2 4
 
-  # Mulligan decision: Probability of better hand (3-5 lands in 6 cards)
-  npx ts-node src/hypergeometric.ts --deck 99 --target 37 --draw 6 --between 3 5
+Multiple Groups Examples:
+  # Probability of combo: at least 1 Sanguine Bond (3 in deck) AND 1 Exquisite Blood (2 in deck) by turn 8
+  npx ts-node src/hypergeometric.ts --deck 100 --draw 15 --group 3 1 --group 2 1
+
+  # Probability of 2-4 lands (38) AND at least 1 ramp spell (8) in opening hand
+  npx ts-node src/hypergeometric.ts --deck 100 --draw 7 --group 38 2 4 --group 8 1
 `);
         process.exit(0);
     }
@@ -170,9 +272,10 @@ Examples:
     let populationSize = 100;
     let successesInPopulation = 0;
     let sampleSize = 7;
-    let mode: "exactly" | "at-least" | "at-most" | "between" = "exactly";
+    let mode: "exactly" | "at-least" | "at-most" | "between" | "multivariate" = "exactly";
     let targetValue = 0;
     let targetValue2 = 0;
+    const groups: CardGroup[] = [];
 
     for (let i = 0; i < args.length; i++) {
         switch (args[i]) {
@@ -202,9 +305,54 @@ Examples:
                 targetValue = parseInt(args[++i]);
                 targetValue2 = parseInt(args[++i]);
                 break;
+            case "--group":
+                mode = "multivariate";
+                const count = parseInt(args[++i]);
+                const min = parseInt(args[++i]);
+                const max =
+                    args[i + 1] && !args[i + 1].startsWith("--") ? parseInt(args[++i]) : undefined;
+                groups.push({ count, min, max });
+                break;
         }
     }
 
+    // Multivariate calculation
+    if (mode === "multivariate") {
+        if (groups.length === 0) {
+            console.error("❌ Error: Must specify at least one --group");
+            process.exit(1);
+        }
+
+        const probability = multivariateHypergeometric(populationSize, groups, sampleSize);
+
+        console.log(`
+📊 Multivariate Hypergeometric Probability Calculation
+════════════════════════════════════════════════════════════════
+
+Deck Setup:
+  • Total cards in deck: ${populationSize}
+  • Cards drawn: ${sampleSize}
+
+Groups:`);
+        groups.forEach((g, idx) => {
+            const minDesc = g.min ?? 1;
+            const maxDesc = g.max ?? sampleSize;
+            const range = g.min === g.max ? `exactly ${minDesc}` : `${minDesc}-${maxDesc}`;
+            console.log(`  ${idx + 1}. ${g.count} cards in deck, need ${range}`);
+        });
+
+        console.log(`
+Question:
+  What's the probability of drawing the required amounts from ALL groups?
+
+Result:
+  🎯 ${(probability * 100).toFixed(2)}% chance
+  📈 Odds: 1 in ${(1 / probability).toFixed(2)}
+`);
+        process.exit(0);
+    }
+
+    // Single group calculation
     if (successesInPopulation === 0) {
         console.error("❌ Error: Must specify --target <K>");
         process.exit(1);

@@ -3,6 +3,7 @@ import {
     hypergeometricAtLeast,
     hypergeometricAtMost,
     hypergeometricBetween,
+    multivariateHypergeometric,
 } from "../hypergeometric";
 
 describe("Hypergeometric Calculator", () => {
@@ -220,6 +221,153 @@ describe("Hypergeometric Calculator", () => {
             const atLeast3 = hypergeometricAtLeast(100, 38, 7, 3);
             const atMost2 = hypergeometricAtMost(100, 38, 7, 2);
             expect(atLeast3 + atMost2).toBeCloseTo(1.0, 10);
+        });
+    });
+
+    describe("multivariateHypergeometric", () => {
+        test("calculates probability of drawing 1+ from each of two groups (3 + 2 in deck)", () => {
+            // User's combo question: 3 Sanguine Bond effects + 2 Exquisite Blood effects
+            // By turn 8: 15 cards drawn
+            const result = multivariateHypergeometric(
+                100,
+                [
+                    { count: 3, min: 1 }, // At least 1 Sanguine Bond effect
+                    { count: 2, min: 1 }, // At least 1 Exquisite Blood effect
+                ],
+                15
+            );
+
+            // This should be less than the product of individual probabilities
+            // P(≥1 from 3) = 38.92%, P(≥1 from 2) = 27.88%
+            // If independent: 38.92% × 27.88% = 10.85%
+            // Actual should be close but slightly different due to finite population
+            expect(result).toBeGreaterThan(0.1);
+            expect(result).toBeLessThan(0.15);
+        });
+
+        test("calculates probability of drawing exactly 1 from each of two groups", () => {
+            const result = multivariateHypergeometric(
+                100,
+                [
+                    { count: 3, min: 1, max: 1 }, // Exactly 1 from group 1
+                    { count: 2, min: 1, max: 1 }, // Exactly 1 from group 2
+                ],
+                7
+            );
+
+            // With only 7 cards, probability of exactly 1 from each should be reasonable
+            expect(result).toBeGreaterThan(0);
+            expect(result).toBeLessThan(0.2);
+        });
+
+        test("calculates probability with three groups", () => {
+            const result = multivariateHypergeometric(
+                100,
+                [
+                    { count: 38, min: 2, max: 4 }, // 2-4 lands
+                    { count: 8, min: 1 }, // At least 1 ramp spell
+                    { count: 10, min: 1 }, // At least 1 removal spell
+                ],
+                7
+            );
+
+            // This is a complex multi-group scenario
+            expect(result).toBeGreaterThan(0);
+            expect(result).toBeLessThan(0.5);
+        });
+
+        test("handles impossible scenario (requires more cards than drawn)", () => {
+            const result = multivariateHypergeometric(
+                100,
+                [
+                    { count: 3, min: 2 }, // Need 2 from group 1
+                    { count: 2, min: 2 }, // Need 2 from group 2
+                ],
+                3 // Only drawing 3 cards total, but need 4 minimum
+            );
+
+            expect(result).toBe(0);
+        });
+
+        test("handles scenario where all cards are in groups", () => {
+            const result = multivariateHypergeometric(
+                10,
+                [
+                    { count: 6, min: 3, max: 5 }, // 3-5 from first 6
+                    { count: 4, min: 2, max: 4 }, // 2-4 from remaining 4
+                ],
+                7
+            );
+
+            // Must draw 3-5 from first group and 2-4 from second group
+            // With 7 cards drawn from 10 total, this is constrained
+            expect(result).toBeGreaterThan(0);
+            expect(result).toBeLessThan(1);
+        });
+
+        test("handles single group (equivalent to regular hypergeometric)", () => {
+            const multivariateResult = multivariateHypergeometric(100, [{ count: 38, min: 3 }], 7);
+
+            const regularResult = hypergeometricAtLeast(100, 38, 7, 3);
+
+            expect(multivariateResult).toBeCloseTo(regularResult, 10);
+        });
+
+        test("handles min without max (defaults to sample size)", () => {
+            const result = multivariateHypergeometric(
+                100,
+                [
+                    { count: 10, min: 2 }, // At least 2, up to 7 (sample size)
+                ],
+                7
+            );
+
+            expect(result).toBeGreaterThan(0);
+            expect(result).toBeLessThan(1);
+        });
+
+        test("returns 0 for impossible group constraints", () => {
+            const result = multivariateHypergeometric(
+                100,
+                [
+                    { count: 5, min: 10 }, // Impossible: need 10 but only 5 in deck
+                ],
+                15
+            );
+
+            expect(result).toBe(0);
+        });
+
+        test("handles opening hand scenario with 2-4 lands", () => {
+            const result = multivariateHypergeometric(100, [{ count: 38, min: 2, max: 4 }], 7);
+
+            const betweenResult = hypergeometricBetween(100, 38, 7, 2, 4);
+
+            expect(result).toBeCloseTo(betweenResult, 10);
+        });
+
+        test("combo pieces by turn 5 (12 cards drawn)", () => {
+            const result = multivariateHypergeometric(
+                100,
+                [
+                    { count: 3, min: 1 }, // Sanguine Bond effects
+                    { count: 2, min: 1 }, // Exquisite Blood effects
+                ],
+                12
+            );
+
+            // Should have better odds than turn 1 (7 cards)
+            const turn1Result = multivariateHypergeometric(
+                100,
+                [
+                    { count: 3, min: 1 },
+                    { count: 2, min: 1 },
+                ],
+                7
+            );
+
+            expect(result).toBeGreaterThan(turn1Result);
+            expect(result).toBeLessThan(1);
         });
     });
 });
