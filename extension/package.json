@@ -1,0 +1,75 @@
+{
+    "name": "mtg-deck-builder-extension",
+    "displayName": "MTG Deck Builder",
+    "description": "Magic: The Gathering deck analysis and optimization in VS Code",
+    "version": "0.1.0",
+    "publisher": "alxhghs",
+    "engines": {
+        "vscode": "^1.80.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onLanguage:plaintext",
+        "workspaceContains:**/decks/**"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "mtg.analyzeDeck",
+                "title": "MTG: Analyze Deck",
+                "icon": "$(graph)"
+            },
+            {
+                "command": "mtg.countCards",
+                "title": "MTG: Count Cards",
+                "icon": "$(list-ordered)"
+            },
+            {
+                "command": "mtg.importMoxfield",
+                "title": "MTG: Import from Moxfield",
+                "icon": "$(cloud-download)"
+            },
+            {
+                "command": "mtg.calculateProbability",
+                "title": "MTG: Calculate Probability",
+                "icon": "$(beaker)"
+            }
+        ],
+        "views": {
+            "explorer": [
+                {
+                    "id": "mtgDeckExplorer",
+                    "name": "MTG Decks"
+                }
+            ]
+        },
+        "menus": {
+            "view/item/context": [
+                {
+                    "command": "mtg.analyzeDeck",
+                    "when": "view == mtgDeckExplorer && viewItem == deckFile",
+                    "group": "inline"
+                },
+                {
+                    "command": "mtg.countCards",
+                    "when": "view == mtgDeckExplorer && viewItem == deckFile"
+                }
+            ]
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile",
+        "lint": "eslint src --ext ts"
+    },
+    "devDependencies": {
+        "@types/node": "^20.10.0",
+        "@types/vscode": "^1.80.0",
+        "typescript": "^5.3.3"
+    }
+}
